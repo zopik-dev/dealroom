@@ -1,0 +1,20 @@
+{
+  "name": "dealroom",
+  "version": "0.1.0",
+  "description": "Two AI agents negotiate a deal, PayPal holds the money, an AI arbiter decides when to release it.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/mandate.test.js tests/e2e.test.js",
+    "check": "node --check src/server.js && node --check src/paypal.js && node --check src/agents.js && node --check src/arbiter.js && node --check src/mandate.js && node --check src/ai.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
