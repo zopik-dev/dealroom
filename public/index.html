@@ -6,419 +6,427 @@
 <title>DEALROOM — Deals negotiated by AI. Money released by evidence.</title>
 <style>
 :root{
-  --bg:#070c22;
-  --bg-2:#0b1533;
-  --surface:#101b42;
-  --surface-2:#0d1737;
-  --surface-3:#0a1230;
-  --input:#080e28;
-  --line:rgba(148,170,220,.16);
-  --line-soft:rgba(148,170,220,.09);
-  --ink:#f2f5fc;
-  --mut:#8fa1c4;
-  --mut-2:#93a5c9;
+  --ground:#060a1a;
+  --ground-2:#0b1128;
+  --surface:#0f1633;
+  --surface-2:#151d42;
+  --line:rgba(120,145,200,.14);
+  --line-strong:rgba(120,145,200,.28);
+  --ink:#f0f3fa;
+  --ink-2:#c4cee6;
+  --muted:#7a8bb3;
+  --muted-2:#5a6a8f;
   --green:#3dff9e;
-  --green-dim:rgba(61,255,158,.13);
+  --green-dim:rgba(61,255,158,.10);
+  --green-glow:rgba(61,255,158,.25);
   --amber:#ffcf5c;
-  --amber-dim:rgba(255,207,92,.12);
-  --red:#ff8f8f;
-  --red-dim:rgba(255,143,143,.10);
+  --amber-dim:rgba(255,207,92,.10);
+  --red:#ff8a8a;
+  --red-dim:rgba(255,138,138,.08);
   --blue:#7fd6ff;
-  --radius:14px;
+  --r:2px;
   --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-in:cubic-bezier(.76,0,.24,1);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
-::selection{background:rgba(61,255,158,.28)}
-a{color:var(--blue)}
-:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:6px}
-.wrap{max-width:1160px;margin:0 auto;padding:0 22px}
-section.block{padding:52px 0;border-top:1px solid var(--line-soft);scroll-margin-top:64px}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin:0 0 10px}
-h1,h2{line-height:1.08;letter-spacing:-.02em;margin:0}
-h1{font-size:clamp(38px,6vw,68px);font-weight:800}
-h2{font-size:clamp(24px,3.4vw,34px);font-weight:750}
-.lede{color:var(--mut);font-size:16.5px;max-width:640px;margin:14px 0 0}
-p.small{color:var(--mut);font-size:13.5px}
-.num{font-variant-numeric:tabular-nums}
-/* ---------- A. nav + hero ---------- */
-.topbar{position:sticky;top:0;z-index:40;background:rgba(7,12,34,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
-.topbar-in{max-width:1160px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
-.wordmark{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em;font-size:16px;color:var(--ink);text-decoration:none;white-space:nowrap}
-.wordmark-mark{width:30px;height:30px;border:1px solid var(--green);border-radius:8px;display:inline-grid;place-items:center;color:var(--green);font-size:15px;font-weight:800}
-.health{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--surface-2);white-space:nowrap}
-.health .dot{width:8px;height:8px;border-radius:50%;background:var(--mut-2)}
+body{background:var(--ground);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--green);color:#06281a}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:1.5px solid var(--green);outline-offset:3px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+@media(max-width:640px){.wrap{padding:0 20px}}
+/* ---------- corner frame nav ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.topbar > *{pointer-events:auto}
+.wordmark{font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.wordmark .mark{width:22px;height:22px;border:1px solid var(--green);display:grid;place-items:center;font-size:11px;color:var(--green);font-weight:800}
+.health{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px;font-family:var(--mono);letter-spacing:.04em}
+.health .dot{width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
 .health.ok .dot{background:var(--green)}
-.health.ok{color:var(--ink)}
-.health.bad .dot{background:var(--red)}
-.deal-pill{display:none;align-items:center;gap:8px;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--surface-2);color:var(--mut);max-width:280px}
-.deal-pill.show{display:inline-flex}
-.deal-pill b{color:var(--ink);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
-.deal-pill .st{font-family:var(--mono);font-size:11px;color:var(--green)}
-.nav-links{margin-left:auto;display:flex;gap:4px}
-.nav-links a{font-size:13px;color:var(--mut);text-decoration:none;padding:7px 11px;border-radius:8px;white-space:nowrap}
-.nav-links a:hover{color:var(--ink);background:rgba(148,170,220,.08)}
-@media(max-width:900px){.nav-links{display:none}}
-.hero{background:var(--bg-2);border-bottom:1px solid var(--line-soft);position:relative;overflow:hidden}
+.health.ok{color:var(--ink-2)}
+.nav-links{display:flex;gap:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nav-links a{position:relative;padding:4px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--green);transition:width .3s var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{width:100%}
+@media(max-width:760px){.nav-links{display:none}}
+.corner{position:fixed;bottom:18px;left:28px;z-index:50;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;pointer-events:none}
+.corner.r{left:auto;right:28px;text-align:right}
+@media(max-width:640px){.topbar{padding:14px 20px}.corner{left:20px;bottom:14px}.corner.r{right:20px}}
+/* ---------- hero ---------- */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 0 80px;position:relative;overflow:hidden}
 .hero-grid{position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
-  background-size:72px 72px;
-  -webkit-mask-image:radial-gradient(720px 420px at 30% 20%,#000 30%,transparent 75%);
-  mask-image:radial-gradient(720px 420px at 30% 20%,#000 30%,transparent 75%)}
-.hero-in{position:relative;max-width:1160px;margin:0 auto;padding:68px 22px 0}
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(900px 600px at 50% 40%,#000 20%,transparent 70%);
+  -webkit-mask-image:radial-gradient(900px 600px at 50% 40%,#000 20%,transparent 70%)}
+.hero-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.hero-label::before{content:"";width:40px;height:1px;background:var(--green)}
+.hero h1{font-size:clamp(52px,9vw,128px);font-weight:800;line-height:.92;letter-spacing:-.04em;max-width:1100px}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line span{display:block;transform:translateY(110%);animation:reveal .9s var(--ease) forwards}
+.hero h1 .line:nth-child(2) span{animation-delay:.08s}
+.hero h1 .line:nth-child(3) span{animation-delay:.16s}
 .hero h1 .accent{color:var(--green)}
-.hero-figure{margin:36px 0 0;border:1px solid var(--line);border-radius:18px;background:var(--surface-2);overflow:hidden}
-.figure-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch}
-.agent{padding:22px 24px}
-.agent + .agent{border-left:1px solid var(--line-soft)}
-.agent-role{font-size:11px;font-weight:700;letter-spacing:.15em;color:var(--mut);margin-bottom:8px}
-.agent-name{font-size:17px;font-weight:750;letter-spacing:-.01em}
-.agent-note{font-size:13px;color:var(--mut);margin:6px 0 0}
-.lock{font-size:11.5px;color:var(--mut-2);border:1px dashed var(--line);border-radius:8px;padding:5px 9px;margin-top:12px;display:inline-block}
-.vault{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 30px;border-left:1px solid var(--line-soft);border-right:1px solid var(--line-soft);background:var(--surface);min-width:230px}
-.vault-label{font-size:11px;font-weight:700;letter-spacing:.15em;color:var(--mut)}
-.vault-amount{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:4px 0;font-variant-numeric:tabular-nums}
-.vault-state{font-size:12px;color:var(--green);border:1px solid rgba(61,255,158,.35);background:var(--green-dim);border-radius:999px;padding:3px 11px;font-family:var(--mono)}
-@media(max-width:760px){.figure-top{grid-template-columns:1fr}.agent + .agent{border-left:0;border-top:1px solid var(--line-soft)}.vault{border:0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}}
-.figure-bottom{display:flex;align-items:center;gap:10px;padding:14px 24px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--mut)}
-.figure-bottom .sep{flex:1;height:1px;background:var(--line-soft)}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-.trust{display:flex;flex-wrap:wrap;gap:8px 10px;padding:20px 0 34px;font-size:12.5px;color:var(--mut)}
-.trust span{border:1px solid var(--line);border-radius:999px;padding:5px 13px;background:rgba(148,170,220,.05)}
-/* ---------- shared panels ---------- */
-.panel{background:var(--surface-2);border:1px solid var(--line);border-radius:18px;padding:26px}
-@media(max-width:640px){.panel{padding:20px}}
-.panel-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.panel-index{font-family:var(--mono);font-size:12px;color:var(--green);border:1px solid rgba(61,255,158,.35);border-radius:7px;padding:2px 8px}
-.panel h2{font-size:22px}
-.field{margin:16px 0 0}
-label.flabel,.flabel{display:block;font-size:12.5px;font-weight:650;color:var(--ink);margin:0 0 7px}
-label.flabel .req{color:var(--green)}
-.fhint{font-size:12.5px;color:var(--mut-2);margin:7px 0 0}
-input[type=text],input[type=number],textarea{width:100%;background:var(--input);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:inherit;font-size:14.5px;padding:11px 13px}
-textarea{min-height:96px;resize:vertical;line-height:1.6}
-input::placeholder,textarea::placeholder{color:var(--mut-2)}
-input:focus,textarea:focus{outline:2px solid var(--green);outline-offset:2px;border-color:var(--green)}
-input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--red)}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@keyframes reveal{to{transform:translateY(0)}}
+.hero-sub{margin-top:32px;max-width:520px;font-size:17px;color:var(--ink-2);line-height:1.6}
+.hero-amount{margin-top:64px;display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:end;border-top:1px solid var(--line);padding-top:32px}
+.hero-amount .label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.hero-amount .num{font-size:clamp(64px,10vw,140px);font-weight:800;letter-spacing:-.04em;line-height:.9;font-variant-numeric:tabular-nums;color:var(--amber)}
+.hero-amount .num.released{color:var(--green)}
+.hero-amount .side{font-size:13px;color:var(--muted);line-height:1.7;max-width:320px;padding-bottom:12px}
+.hero-amount .side b{color:var(--ink);font-weight:600}
+@media(max-width:760px){.hero-amount{grid-template-columns:1fr;gap:20px}.hero-amount .num{font-size:clamp(48px,14vw,80px)}}
+.hero-trust{margin-top:48px;display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+.hero-trust span{display:flex;align-items:center;gap:8px}
+.hero-trust span::before{content:"";width:4px;height:4px;background:var(--green);border-radius:50%}
+/* ---------- sections ---------- */
+section{padding:120px 0;position:relative}
+section .section-head{display:grid;grid-template-columns:120px 1fr;gap:24px;margin-bottom:48px;align-items:baseline}
+.section-num{font-family:var(--mono);font-size:12px;color:var(--green);letter-spacing:.08em}
+.section-title{font-size:clamp(32px,4.5vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.section-sub{color:var(--muted);font-size:15px;max-width:560px;margin-top:12px}
+@media(max-width:760px){section{padding:80px 0}section .section-head{grid-template-columns:1fr;gap:8px}}
+/* ---------- B. create ---------- */
+.create-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+@media(max-width:900px){.create-grid{grid-template-columns:1fr;gap:40px}}
+.field{margin-bottom:24px}
+.flabel{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
+.flabel .req{color:var(--green)}
+input,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line-strong);color:var(--ink);font:inherit;font-size:16px;padding:10px 0;outline:none;transition:border-color .2s}
+input:focus,textarea:focus{border-color:var(--green)}
+textarea{min-height:96px;resize:vertical;line-height:1.6;border:1px solid var(--line-strong);padding:12px;border-radius:var(--r)}
+textarea:focus{border-color:var(--green)}
+.fhint{font-size:12px;color:var(--muted-2);margin-top:6px;font-family:var(--mono)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 @media(max-width:640px){.frow{grid-template-columns:1fr}}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font:inherit;font-weight:700;font-size:15px;border-radius:11px;padding:13px 22px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .12s ease,border-color .12s ease}
-.btn-primary{background:var(--green);color:#06281a;border-color:var(--green)}
-.btn-primary:hover{background:#6fffb4}
-.btn-primary:disabled{background:rgba(61,255,158,.25);border-color:rgba(61,255,158,.25);color:rgba(6,40,26,.75);cursor:not-allowed}
-.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:16px 28px;border:1px solid var(--green);background:var(--green);color:#06281a;cursor:pointer;transition:all .2s var(--ease);border-radius:var(--r)}
+.btn:hover{background:transparent;color:var(--green)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
 .btn-ghost:hover{border-color:var(--green);color:var(--green)}
-.btn-ghost:disabled{opacity:.45;cursor:not-allowed}
-.btn-gold{background:var(--amber);border-color:var(--amber);color:#2b1d00;font-size:16px;padding:15px 26px}
-.btn-gold:hover{background:#ffd97e}
-.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-.form-error{display:none;margin-top:14px;font-size:13.5px;color:var(--red);border:1px solid rgba(255,143,143,.4);background:var(--red-dim);border-radius:10px;padding:10px 14px}
+.btn-gold{background:var(--amber);border-color:var(--amber);color:#2b1d00}
+.btn-gold:hover{background:transparent;color:var(--amber)}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.form-error{display:none;margin-top:16px;font-size:13px;color:var(--red);border:1px solid rgba(255,138,138,.3);padding:12px 16px;border-radius:var(--r)}
 .form-error.show{display:block}
-.form-ok{display:none;margin-top:14px;font-size:13.5px;color:var(--green);border:1px solid rgba(61,255,158,.35);background:var(--green-dim);border-radius:10px;padding:10px 14px}
+.form-ok{display:none;margin-top:16px;font-size:13px;color:var(--green);border:1px solid rgba(61,255,158,.3);padding:12px 16px;border-radius:var(--r)}
 .form-ok.show{display:block}
-.spinner{width:15px;height:15px;border-radius:50%;border:2px solid rgba(6,40,26,.3);border-top-color:#06281a;animation:spin .7s linear infinite;display:none}
+.spinner{width:14px;height:14px;border:1.5px solid rgba(6,40,26,.3);border-top-color:#06281a;border-radius:50%;animation:spin .7s linear infinite;display:none}
 .btn.loading .spinner{display:inline-block}
-.btn-ghost .spinner{border-color:rgba(242,245,252,.25);border-top-color:var(--ink)}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* ---------- C. conversation ---------- */
-.dealbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:18px;padding-top:18px;border-top:1px solid var(--line-soft)}
-.dealbar .grow{flex:1;min-width:220px;margin:0}
-.convo{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.load-form{margin-top:40px;padding-top:32px;border-top:1px solid var(--line)}
+/* ---------- C. negotiation ---------- */
+.convo{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:32px}
 @media(max-width:760px){.convo{grid-template-columns:1fr}}
-.col-head{padding:13px 18px;border-bottom:1px solid var(--line-soft);background:var(--surface)}
-.col-head .who{font-size:12px;font-weight:700;letter-spacing:.13em}
+.col-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.col-head .who{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
 .col-buyer .who{color:var(--blue)}
 .col-seller .who{color:var(--amber)}
-.col-buyer{border-right:1px solid var(--line-soft)}
-@media(max-width:760px){.col-buyer{border-right:0;border-bottom:1px solid var(--line-soft)}}
-.col-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-height:180px}
-.bubble{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--surface-3);max-width:100%}
-.bubble .m{font-size:14px;margin:0;overflow-wrap:break-word}
-.bubble .meta{display:flex;gap:8px;align-items:center;margin-top:9px;font-size:11.5px;color:var(--mut-2);font-family:var(--mono);flex-wrap:wrap}
-.bubble.offer{border-color:rgba(61,255,158,.4)}
-.bubble .offer-price{color:var(--green);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
-.bubble.blocked{border-style:dashed;border-color:var(--amber);opacity:.9}
-.bubble.blocked .cap{font-size:11px;color:var(--amber);border:1px solid rgba(255,207,92,.45);border-radius:6px;padding:1px 7px}
-.turn-tag{font-size:10.5px;letter-spacing:.08em;color:var(--mut-2)}
-.convo-empty{padding:26px 18px;color:var(--mut-2);font-size:13.5px}
-.sse-state{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:12.5px;color:var(--mut)}
-.sse-dot{width:8px;height:8px;border-radius:50%;background:var(--mut-2)}
+.col-buyer{border-right:1px solid var(--line)}
+@media(max-width:760px){.col-buyer{border-right:0;border-bottom:1px solid var(--line)}}
+.col-body{padding:20px;min-height:200px;display:flex;flex-direction:column;gap:14px}
+.bubble{border:1px solid var(--line);padding:14px 16px;border-radius:var(--r);background:var(--surface);max-width:100%;opacity:0;transform:translateY(8px);animation:bubbleIn .4s var(--ease) forwards}
+@keyframes bubbleIn{to{opacity:1;transform:translateY(0)}}
+.bubble .text{font-size:14px;line-height:1.6}
+.bubble .meta{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:11px;color:var(--muted);font-family:var(--mono);flex-wrap:wrap}
+.bubble .price{color:var(--green);font-weight:700}
+.bubble.blocked .cap{font-size:10px;color:var(--amber);border:1px solid rgba(255,207,92,.4);padding:2px 8px;border-radius:var(--r)}
+.bubble.buyer{border-left:2px solid var(--blue)}
+.bubble.seller{border-left:2px solid var(--amber)}
+.convo-empty{padding:32px 20px;color:var(--muted-2);font-size:13px;text-align:center}
+.sse-state{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.sse-dot{width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
 .sse-dot.live{background:var(--green);animation:blink 1.2s ease infinite}
 .sse-dot.done{background:var(--green)}
 .sse-dot.err{background:var(--red)}
-@keyframes blink{50%{opacity:.35}}
+@keyframes blink{50%{opacity:.3}}
 /* ---------- D. tracker ---------- */
-.tracker{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:var(--surface-3);padding:22px 22px 18px;overflow-x:auto}
-.tracker:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-.track{display:flex;align-items:flex-start;min-width:640px}
-.tstep{flex:1;position:relative;text-align:center;padding-top:30px}
-.tstep::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:var(--line)}
+.tracker{margin-top:32px;border:1px solid var(--line);padding:32px 28px;overflow-x:auto}
+.tracker:focus-visible{outline:1.5px solid var(--green);outline-offset:2px}
+.track{display:flex;align-items:flex-start;min-width:620px;position:relative}
+.tstep{flex:1;position:relative;text-align:center;padding-top:28px}
+.tstep::before{content:"";position:absolute;top:9px;left:-50%;width:100%;height:1px;background:var(--line)}
 .tstep:first-child::before{display:none}
-.tstep .pip{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;border:2px solid var(--mut-2);background:var(--bg);z-index:1}
+.tstep .pip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:18px;height:18px;border:1px solid var(--muted-2);background:var(--ground);z-index:1;transition:all .3s var(--ease)}
 .tstep.done::before{background:var(--green)}
 .tstep.done .pip{border-color:var(--green);background:var(--green)}
-.tstep.done .pip::after{content:"";display:block;width:6px;height:6px;margin:5px auto 0;border-radius:50%;background:#06281a}
-.tstep.active .pip{border-color:var(--green);box-shadow:0 0 0 5px rgba(61,255,158,.15)}
-.tstep.amber.active .pip{border-color:var(--amber);box-shadow:0 0 0 5px rgba(255,207,92,.15)}
+.tstep.done .pip::after{content:"";display:block;width:6px;height:6px;margin:5px auto 0;background:#06281a;border-radius:50%}
+.tstep.active .pip{border-color:var(--green);box-shadow:0 0 0 4px var(--green-dim)}
+.tstep.amber.active .pip{border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-dim)}
 .tstep.failed .pip{border-color:var(--red)}
-.tstep .t{font-size:12.5px;font-weight:700}
-.tstep .s{font-size:11.5px;color:var(--mut-2);font-family:var(--mono)}
+.tstep .t{font-size:12px;font-weight:700;letter-spacing:.04em}
+.tstep .s{font-size:10px;color:var(--muted-2);font-family:var(--mono);margin-top:2px}
 .tstep.done .t{color:var(--green)}
 .tstep.active .t{color:var(--ink)}
-.tstep.rest .t{color:var(--mut)}
-@media(max-width:760px){.track{flex-direction:column;min-width:0}.tstep{text-align:left;padding:0 0 18px 34px}.tstep::before{top:0;left:9px;width:2px;height:100%}.tstep .pip{left:0;transform:none}}
-.tracker-note{margin:14px 0 0;font-size:13px;color:var(--mut)}
-.tracker-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.btn-sm{font-size:13px;padding:9px 16px}
+.tstep.rest .t{color:var(--muted)}
+@media(max-width:760px){.track{flex-direction:column;min-width:0}.tstep{text-align:left;padding:0 0 20px 32px}.tstep::before{top:0;left:8px;width:1px;height:100%}.tstep .pip{left:0;transform:none}}
+.tracker-note{margin-top:20px;font-size:13px;color:var(--muted);font-family:var(--mono)}
+.tracker-actions{display:flex;gap:10px;margin-top:16px}
+.btn-sm{font-size:11px;padding:10px 18px;letter-spacing:.08em}
 /* ---------- E. funding ---------- */
-.fund{margin-top:22px;border-radius:14px;padding:30px 28px;border:1px solid var(--line);background:var(--surface-2)}
-.fund.await{border-color:rgba(255,207,92,.5);background:linear-gradient(180deg,rgba(255,207,92,.07),rgba(255,207,92,.015))}
-.fund.held{border-color:rgba(61,255,158,.45);background:linear-gradient(180deg,rgba(61,255,158,.08),rgba(61,255,158,.015))}
-.fund-label{font-size:11px;font-weight:700;letter-spacing:.15em;color:var(--mut);margin:0}
-.fund-amount{font-size:clamp(48px,7vw,76px);font-weight:800;letter-spacing:-.03em;line-height:1;margin:8px 0 2px;font-variant-numeric:tabular-nums}
-.fund-sub{color:var(--mut);font-size:14px;margin:0 0 18px;max-width:560px}
-.held-line{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--green);font-weight:650;margin:0 0 6px}
-.held-line .tick{width:22px;height:22px;border-radius:50%;background:var(--green);color:#06281a;display:inline-grid;place-items:center;font-size:13px;font-weight:800}
-/* ---------- F/G verdict ---------- */
-.criteria{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
-.criteria li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--surface-3)}
-.criteria .mark{flex:0 0 24px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800}
-.criteria li.met .mark{background:var(--green);color:#06281a}
-.criteria li.unmet .mark{background:transparent;border:1.5px solid var(--red);color:var(--red)}
-.criteria .cn{font-size:14px;font-weight:650}
-.criteria .cs{font-size:12px;font-weight:700;letter-spacing:.08em;margin-left:8px}
+.fund{margin-top:32px;border:1px solid var(--line);padding:40px 36px;position:relative;overflow:hidden}
+.fund.await{border-color:rgba(255,207,92,.4)}
+.fund.held{border-color:rgba(61,255,158,.4)}
+.fund-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0}
+.fund-amount{font-size:clamp(56px,9vw,104px);font-weight:800;letter-spacing:-.04em;line-height:.9;margin:12px 0 4px;font-variant-numeric:tabular-nums}
+.fund.await .fund-amount{color:var(--amber)}
+.fund.held .fund-amount{color:var(--green)}
+.fund-sub{color:var(--muted);font-size:14px;margin:0 0 24px;max-width:520px}
+.held-line{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--green);font-weight:600;margin:0 0 8px}
+.held-line .tick{width:24px;height:24px;border:1px solid var(--green);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--green)}
+.approve-btn{display:inline-flex;align-items:center;gap:12px;font:inherit;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:18px 32px;background:var(--amber);color:#2b1d00;border:1px solid var(--amber);cursor:pointer;transition:all .2s var(--ease);border-radius:var(--r);text-decoration:none}
+.approve-btn:hover{background:transparent;color:var(--amber)}
+/* ---------- F/G ---------- */
+.criteria{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.criteria li{display:flex;gap:16px;align-items:flex-start;border:1px solid var(--line);padding:16px 18px;border-radius:var(--r);background:var(--surface)}
+.criteria .mark{flex:0 0 22px;width:22px;height:22px;border:1px solid var(--muted-2);display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.criteria li.met .mark{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.criteria li.unmet .mark{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+.criteria .cn{font-size:14px;font-weight:600}
+.criteria .cs{font-size:10px;letter-spacing:.12em;margin-left:10px;font-family:var(--mono)}
 .criteria li.met .cs{color:var(--green)}
 .criteria li.unmet .cs{color:var(--red)}
-.criteria .cn-note{font-size:13px;color:var(--mut);margin:3px 0 0}
-.verdict-bar{margin-top:18px;border-radius:12px;padding:18px;background:var(--surface-3);border:1px solid var(--line)}
-.verdict-bar.release{border-color:rgba(61,255,158,.5)}
-.verdict-bar.partial{border-color:rgba(255,207,92,.5)}
-.verdict-bar.refund{border-color:rgba(255,143,143,.45)}
-.verdict-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.verdict-word{font-size:20px;font-weight:800;letter-spacing:-.01em}
-.verdict-bar.release .verdict-word{color:var(--green)}
-.verdict-bar.partial .verdict-word{color:var(--amber)}
-.verdict-bar.refund .verdict-word{color:var(--red)}
-.verdict-pct{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
-.meter{height:8px;border-radius:99px;background:rgba(148,170,220,.15);margin-top:12px;overflow:hidden}
-.meter i{display:block;height:100%;border-radius:99px}
-.verdict-bar.release .meter i{background:var(--green)}
-.verdict-bar.partial .meter i{background:var(--amber)}
-.verdict-bar.refund .meter i{background:var(--red)}
-.moneyline{display:flex;gap:26px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--mut)}
-.moneyline b{display:block;font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums}
-.txref{font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:12px;overflow-wrap:anywhere}
+.criteria .cn-note{font-size:13px;color:var(--muted);margin:4px 0 0}
+.verdict{margin-top:24px;border:1px solid var(--line);padding:24px 28px;border-radius:var(--r);background:var(--surface)}
+.verdict.release{border-color:rgba(61,255,158,.4)}
+.verdict.partial{border-color:rgba(255,207,92,.4)}
+.verdict.refund{border-color:rgba(255,138,138,.4)}
+.verdict-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.verdict-word{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.verdict.release .verdict-word{color:var(--green)}
+.verdict.partial .verdict-word{color:var(--amber)}
+.verdict.refund .verdict-word{color:var(--red)}
+.verdict-pct{font-family:var(--mono);font-size:13px;color:var(--muted);margin-left:auto}
+.meter{height:3px;background:var(--line);margin-top:16px;overflow:hidden}
+.meter i{display:block;height:100%;transition:width 1s var(--ease)}
+.verdict.release .meter i{background:var(--green)}
+.verdict.partial .meter i{background:var(--amber)}
+.verdict.refund .meter i{background:var(--red)}
+.moneyline{display:flex;gap:40px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+.moneyline > div{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.moneyline b{display:block;font-size:22px;color:var(--ink);font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.txref{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:16px;overflow-wrap:anywhere}
 .txref b{color:var(--ink)}
-.summary{font-size:15px;margin:14px 0 0;color:var(--ink)}
-.coverage{font-size:12.5px;color:var(--mut);font-family:var(--mono);margin-top:8px}
-.judge-status{margin-top:14px;font-size:13.5px;color:var(--mut)}
+.summary{font-size:15px;margin:16px 0 0;color:var(--ink-2);line-height:1.6;max-width:640px}
+.coverage{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:8px}
+.judge-status{margin-top:16px;font-size:13px;color:var(--muted)}
 /* ---------- H audit ---------- */
-.audit-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.timeline{list-style:none;margin:18px 0 0;padding:0;border-left:2px solid var(--line);display:flex;flex-direction:column}
-.timeline li{position:relative;padding:0 0 18px 22px;font-size:13.5px}
-.timeline li::before{content:"";position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--mut-2)}
-.timeline li.hot::before{border-color:var(--green)}
-.timeline .tt{color:var(--mut-2);font-family:var(--mono);font-size:11.5px}
-details.raw{margin-top:16px;border:1px solid var(--line-soft);border-radius:10px;background:var(--input)}
-details.raw summary{cursor:pointer;padding:12px 14px;font-size:13px;color:var(--mut);list-style:none}
+.audit-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.timeline{list-style:none;margin:24px 0 0;padding:0;border-left:1px solid var(--line);display:flex;flex-direction:column}
+.timeline li{position:relative;padding:0 0 20px 24px;font-size:13px}
+.timeline li::before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--ground);border:1px solid var(--muted-2)}
+.timeline li.hot::before{border-color:var(--green);background:var(--green)}
+.timeline .tt{color:var(--muted-2);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+details.raw{margin-top:20px;border:1px solid var(--line);border-radius:var(--r)}
+details.raw summary{cursor:pointer;padding:14px 18px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;list-style:none}
 details.raw summary:hover{color:var(--ink)}
 details.raw summary::before{content:"+ ";color:var(--green);font-family:var(--mono)}
 details.raw[open] summary::before{content:"– "}
-.audit-pre{font-family:var(--mono);font-size:12px;color:var(--mut);padding:0 14px 14px;overflow:auto;max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
-footer.site{border-top:1px solid var(--line-soft);padding:30px 0 44px;color:var(--mut-2);font-size:12.5px}
-footer.site code{font-family:var(--mono);color:var(--mut)}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#f2f5fc;color:#0b1533;font-size:14px;font-weight:600;border-radius:11px;padding:12px 20px;display:none;z-index:80;max-width:min(92vw,560px);box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.audit-pre{font-family:var(--mono);font-size:11px;color:var(--muted);padding:0 18px 18px;overflow:auto;max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+footer.site{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted-2);font-size:12px}
+footer.site code{font-family:var(--mono);color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--ground);font-size:13px;font-weight:600;padding:14px 22px;border-radius:var(--r);display:none;z-index:80;max-width:min(92vw,560px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .toast.show{display:block}
-.toast.error{background:#ffd9d9;color:#5c0a0a}
+.toast.error{background:var(--red);color:#2b0a0a}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}html{scroll-behavior:auto}}
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
 </style>
 </head>
 <body>
+<!-- corner frame -->
 <header class="topbar">
-  <div class="topbar-in">
-    <a class="wordmark" href="#top" aria-label="DEALROOM home"><span class="wordmark-mark" aria-hidden="true">D</span>DEALROOM</a>
-    <span class="health" id="healthBadge" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="healthText">Checking backend…</span></span>
-    <span class="deal-pill" id="dealPill"><b id="dealPillTitle">—</b><span class="st num" id="dealPillStatus">—</span></span>
-    <nav class="nav-links" aria-label="Sections">
-      <a href="#create">Create</a><a href="#negotiation">Negotiation</a><a href="#funding">Funding</a><a href="#delivery">Delivery</a><a href="#arbiter">Arbiter</a><a href="#audit">Audit</a>
-    </nav>
-  </div>
+  <a class="wordmark" href="#top" aria-label="DEALROOM home"><span class="mark" aria-hidden="true">D</span>DEALROOM</a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#create">Create</a><a href="#negotiation">Negotiate</a><a href="#funding">Fund</a><a href="#delivery">Deliver</a><a href="#arbiter">Settle</a><a href="#audit">Audit</a>
+  </nav>
+  <span class="health" id="healthBadge" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="healthText">Checking…</span></span>
 </header>
+<div class="corner">ESCROW · AI · PAYPAL</div>
+<div class="corner r" id="cornerStatus">IDLE</div>
 
 <main id="top">
   <!-- A. HERO -->
   <div class="hero">
     <div class="hero-grid" aria-hidden="true"></div>
-    <div class="hero-in">
-      <p class="eyebrow">AI escrow · PayPal sandbox · No real money</p>
-      <h1>DEALS NEGOTIATED BY AI.<br><span class="accent">MONEY RELEASED BY EVIDENCE.</span></h1>
-      <p class="lede">Two agents negotiate. PayPal holds the funds. An independent AI arbiter evaluates the work before money moves.</p>
-      <figure class="hero-figure" aria-label="How a deal moves through DEALROOM">
-        <div class="figure-top">
-          <div class="agent">
-            <div class="agent-role">Agent 01</div>
-            <div class="agent-name">Buyer agent</div>
-            <p class="agent-note">Pushes the price down within a confidential ceiling.</p>
-            <span class="lock">Limit sealed · enforced in code</span>
-          </div>
-          <div class="vault">
-            <div class="vault-label">Secured amount</div>
-            <div class="vault-amount num" id="heroAmount" aria-live="polite">$—</div>
-            <div class="vault-state" id="heroState">No deal yet</div>
-          </div>
-          <div class="agent">
-            <div class="agent-role">Agent 02</div>
-            <div class="agent-name">Seller agent</div>
-            <p class="agent-note">Defends the price above a confidential floor.</p>
-            <span class="lock">Limit sealed · enforced in code</span>
-          </div>
+    <div class="wrap">
+      <p class="hero-label reveal">AI escrow · PayPal sandbox · No real money</p>
+      <h1>
+        <span class="line"><span>DEALS NEGOTIATED</span></span>
+        <span class="line"><span>BY <span class="accent">AI.</span></span></span>
+        <span class="line"><span>MONEY RELEASED</span></span>
+        <span class="line"><span>BY <span class="accent">EVIDENCE.</span></span></span>
+      </h1>
+      <p class="hero-sub reveal d1">Two agents haggle within sealed limits. PayPal freezes the agreed sum. An impartial arbiter scores every deliverable before a single cent moves.</p>
+      <div class="hero-amount reveal d2">
+        <div>
+          <div class="label">Secured amount</div>
+          <div class="num" id="heroAmount" aria-live="polite">$—</div>
         </div>
-        <figcaption class="figure-bottom"><span>Negotiate</span><span class="sep" aria-hidden="true"></span><span>Authorize hold — not a charge</span><span class="sep" aria-hidden="true"></span><span>Settle on evidence</span></figcaption>
-      </figure>
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="#create">Start a deal</a>
-        <a class="btn btn-ghost" href="#funding">How the hold works</a>
+        <div class="side">
+          <b id="heroState">No deal yet</b><br>
+          Buyer and seller limits are sealed in code. The browser never sees either. On agreement, the backend creates a PayPal <b>AUTHORIZE</b> order — a hold, not a charge.
+        </div>
       </div>
-      <div class="trust" aria-label="Trust strip">
-        <span>AI-to-AI negotiation</span><span>PayPal authorization</span><span>Deliverable-based settlement</span>
+      <div class="hero-trust reveal d3">
+        <span>AI-to-AI negotiation</span><span>PayPal authorization hold</span><span>Deliverable-based settlement</span>
       </div>
     </div>
   </div>
 
   <div class="wrap">
   <!-- B. CREATE -->
-  <section class="block" id="create" aria-labelledby="create-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">B</span><h2 id="create-h">Create a deal</h2></div>
-      <p class="small">Both limits are confidential inputs. Sent once to start the negotiation, never displayed again — not in the chat, the tracker, funding, verdict, audit, or errors. Cleared from this form after creation.</p>
-      <form id="createForm" novalidate>
-        <div class="field">
-          <label class="flabel" for="fTitle">Deal title <span class="req" aria-hidden="true">*</span></label>
-          <input type="text" id="fTitle" name="title" maxlength="200" placeholder="Logo design for a coffee shop" autocomplete="off" required>
-        </div>
-        <div class="frow">
+  <section id="create">
+    <div class="section-head reveal">
+      <span class="section-num">01 / CREATE</span>
+      <div><h2 class="section-title">Start a deal.</h2><p class="section-sub">Set the two confidential limits. They are sent once, then erased from this form. Never shown again — not in chat, tracker, funding, verdict, audit, or errors.</p></div>
+    </div>
+    <div class="create-grid">
+      <div>
+        <form id="createForm" novalidate>
           <div class="field">
-            <label class="flabel" for="fBuyerMax">Buyer maximum, USD <span class="req" aria-hidden="true">*</span></label>
-            <input type="number" id="fBuyerMax" name="buyerMax" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="100.00" required>
-            <p class="fhint">Private. Never shown after this form.</p>
+            <label class="flabel" for="fTitle">Deal title <span class="req">*</span></label>
+            <input type="text" id="fTitle" maxlength="200" placeholder="Logo design for a coffee shop" autocomplete="off" required>
+          </div>
+          <div class="frow">
+            <div class="field">
+              <label class="flabel" for="fBuyerMax">Buyer maximum, USD <span class="req">*</span></label>
+              <input type="number" id="fBuyerMax" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="100.00" required>
+              <p class="fhint">Private. Cleared after creation.</p>
+            </div>
+            <div class="field">
+              <label class="flabel" for="fSellerMin">Seller minimum, USD <span class="req">*</span></label>
+              <input type="number" id="fSellerMin" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="60.00" required>
+              <p class="fhint">Private. Cleared after creation.</p>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="field">
+              <label class="flabel" for="fCategory">Category</label>
+              <input type="text" id="fCategory" maxlength="60" placeholder="design" autocomplete="off">
+            </div>
+            <div class="field">
+              <label class="flabel" for="fCurrency">Currency</label>
+              <input type="text" id="fCurrency" maxlength="3" value="USD" autocomplete="off">
+            </div>
           </div>
           <div class="field">
-            <label class="flabel" for="fSellerMin">Seller minimum, USD <span class="req" aria-hidden="true">*</span></label>
-            <input type="number" id="fSellerMin" name="sellerMin" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="60.00" required>
-            <p class="fhint">Private. Never shown after this form.</p>
+            <label class="flabel" for="fDeliverables">Deliverables — one requirement per line <span class="req">*</span></label>
+            <textarea id="fDeliverables" placeholder="Logo in SVG&#10;Logo in PNG 1024px&#10;Two color variants" required></textarea>
           </div>
-        </div>
-        <div class="frow">
-          <div class="field">
-            <label class="flabel" for="fCategory">Category</label>
-            <input type="text" id="fCategory" name="category" maxlength="60" placeholder="design" autocomplete="off">
+          <div class="btn-row">
+            <button type="submit" class="btn" id="btnCreate"><span class="spinner" aria-hidden="true"></span><span id="btnCreateLabel">Start AI Negotiation</span></button>
           </div>
-          <div class="field">
-            <label class="flabel" for="fCurrency">Currency</label>
-            <input type="text" id="fCurrency" name="currency" maxlength="3" value="USD" autocomplete="off">
-            <p class="fhint">3-letter code, e.g. USD.</p>
-          </div>
+          <div class="form-error" id="createError" role="alert"></div>
+          <div class="form-ok" id="createOk" role="status"></div>
+        </form>
+      </div>
+      <div>
+        <div class="load-form">
+          <p class="flabel">Or continue an existing deal</p>
+          <form id="loadForm" style="margin-top:12px">
+            <input type="text" id="fDealId" placeholder="Paste deal UUID" autocomplete="off" spellcheck="false">
+            <div class="btn-row" style="margin-top:16px"><button type="submit" class="btn btn-ghost btn-sm" id="btnLoad">Load deal</button></div>
+            <div class="form-error" id="loadError" role="alert"></div>
+          </form>
         </div>
-        <div class="field">
-          <label class="flabel" for="fDeliverables">Deliverables — one requirement per line <span class="req" aria-hidden="true">*</span></label>
-          <textarea id="fDeliverables" placeholder="Logo in SVG&#10;Logo in PNG 1024px&#10;Two color variants" required></textarea>
+        <div style="margin-top:40px;padding:24px;border:1px solid var(--line);border-radius:var(--r)">
+          <p class="flabel" style="margin-bottom:12px">What happens next</p>
+          <p style="font-size:14px;color:var(--ink-2);line-height:1.7">1. Agents haggle live below.<br>2. On agreement, a PayPal <b>AUTHORIZE</b> order freezes the sum.<br>3. You approve in sandbox.<br>4. Seller submits work.<br>5. Arbiter scores each item. Money moves only then.</p>
         </div>
-        <div class="btn-row">
-          <button type="submit" class="btn btn-primary" id="btnCreate"><span class="spinner" aria-hidden="true"></span><span id="btnCreateLabel">Start AI Negotiation</span></button>
-        </div>
-        <div class="form-error" id="createError" role="alert"></div>
-        <div class="form-ok" id="createOk" role="status"></div>
-      </form>
-      <form id="loadForm" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line-soft)" aria-label="Load an existing deal">
-        <div class="field" style="margin-top:0">
-          <label class="flabel" for="fDealId">Or continue an existing deal by ID</label>
-          <input type="text" id="fDealId" placeholder="Paste deal UUID" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="btn-row"><button type="submit" class="btn btn-ghost" id="btnLoad">Load deal</button></div>
-        <div class="form-error" id="loadError" role="alert"></div>
-      </form>
+      </div>
     </div>
   </section>
 
   <!-- C. NEGOTIATION -->
-  <section class="block" id="negotiation" aria-labelledby="nego-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">C</span><h2 id="nego-h">Live AI negotiation</h2></div>
-      <p class="small">Two autonomous agents, one price. Amounts shown are public offers from the event stream. A dashed “capped” flag means code enforced a confidential limit — the limit itself is never revealed.</p>
-      <div class="convo" aria-label="Negotiation conversation">
-        <div class="col-buyer">
-          <div class="col-head"><span class="who">Buyer agent</span></div>
-          <div class="col-body" id="colBuyer" role="log" aria-live="polite" aria-label="Buyer messages"><div class="convo-empty">No messages yet. Start a negotiation above.</div></div>
-        </div>
-        <div class="col-seller">
-          <div class="col-head"><span class="who">Seller agent</span></div>
-          <div class="col-body" id="colSeller" role="log" aria-live="polite" aria-label="Seller messages"><div class="convo-empty">No messages yet. Start a negotiation above.</div></div>
-        </div>
-      </div>
-      <div class="sse-state"><span class="sse-dot" id="sseDot"></span><span id="sseText">Stream idle.</span></div>
-      <div class="form-error" id="sseError" role="alert"></div>
+  <section id="negotiation">
+    <div class="section-head reveal">
+      <span class="section-num">02 / NEGOTIATE</span>
+      <div><h2 class="section-title">Watch them haggle.</h2><p class="section-sub">Two autonomous agents, one price. Amounts are public offers from the event stream. A dashed flag means code enforced a confidential limit — the limit itself is never revealed.</p></div>
     </div>
+    <div class="convo reveal d1">
+      <div class="col-buyer">
+        <div class="col-head"><span class="who">Buyer agent</span><span style="font-size:10px;color:var(--muted-2);font-family:var(--mono)" id="buyerCount"></span></div>
+        <div class="col-body" id="colBuyer" role="log" aria-live="polite" aria-label="Buyer messages"><div class="convo-empty">No messages yet.</div></div>
+      </div>
+      <div class="col-seller">
+        <div class="col-head"><span class="who">Seller agent</span><span style="font-size:10px;color:var(--muted-2);font-family:var(--mono)" id="sellerCount"></span></div>
+        <div class="col-body" id="colSeller" role="log" aria-live="polite" aria-label="Seller messages"><div class="convo-empty">No messages yet.</div></div>
+      </div>
+    </div>
+    <div class="sse-state reveal d2"><span class="sse-dot" id="sseDot"></span><span id="sseText">Stream idle.</span></div>
+    <div class="form-error" id="sseError" role="alert"></div>
   </section>
 
   <!-- D. TRACKER -->
-  <section class="block" id="tracker" aria-labelledby="track-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">D</span><h2 id="track-h">Where is the money?</h2></div>
-      <p class="small">Driven only by the backend status. Authorization is a hold — not a payment.</p>
-      <div class="tracker" tabindex="0" role="list" aria-label="Financial progress">
-        <div class="track" id="track">
-          <div class="tstep" role="listitem" data-stage="1"><span class="pip" aria-hidden="true"></span><div class="t">Negotiating</div><div class="s">offers live</div></div>
-          <div class="tstep" role="listitem" data-stage="2"><span class="pip" aria-hidden="true"></span><div class="t">Awaiting payment</div><div class="s">approve hold</div></div>
-          <div class="tstep" role="listitem" data-stage="3"><span class="pip" aria-hidden="true"></span><div class="t">Funded</div><div class="s">held in escrow</div></div>
-          <div class="tstep" role="listitem" data-stage="4"><span class="pip" aria-hidden="true"></span><div class="t">Delivered</div><div class="s">work submitted</div></div>
-          <div class="tstep" role="listitem" data-stage="5"><span class="pip" aria-hidden="true"></span><div class="t" id="stage5label">Settled</div><div class="s" id="stage5sub">release · split · void</div></div>
-        </div>
+  <section id="tracker">
+    <div class="section-head reveal">
+      <span class="section-num">03 / TRACK</span>
+      <div><h2 class="section-title">Where is the money?</h2><p class="section-sub">Driven only by backend status. Authorization is a hold — not a payment.</p></div>
+    </div>
+    <div class="tracker reveal d1" tabindex="0" role="list" aria-label="Financial progress">
+      <div class="track" id="track">
+        <div class="tstep" role="listitem" data-stage="1"><span class="pip" aria-hidden="true"></span><div class="t">Negotiating</div><div class="s">offers live</div></div>
+        <div class="tstep" role="listitem" data-stage="2"><span class="pip" aria-hidden="true"></span><div class="t">Awaiting payment</div><div class="s">approve hold</div></div>
+        <div class="tstep" role="listitem" data-stage="3"><span class="pip" aria-hidden="true"></span><div class="t">Funded</div><div class="s">held in escrow</div></div>
+        <div class="tstep" role="listitem" data-stage="4"><span class="pip" aria-hidden="true"></span><div class="t">Delivered</div><div class="s">work submitted</div></div>
+        <div class="tstep" role="listitem" data-stage="5"><span class="pip" aria-hidden="true"></span><div class="t" id="stage5label">Settled</div><div class="s" id="stage5sub">release · split · void</div></div>
       </div>
-      <p class="tracker-note" id="trackerNote">Create a deal to begin tracking.</p>
-      <div class="tracker-actions">
-        <button type="button" class="btn btn-ghost btn-sm" id="btnCopyId" disabled>Copy deal ID</button>
-      </div>
+    </div>
+    <p class="tracker-note reveal d2" id="trackerNote">Create a deal to begin tracking.</p>
+    <div class="tracker-actions reveal d2">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnCopyId" disabled>Copy deal ID</button>
     </div>
   </section>
 
   <!-- E. FUNDING -->
-  <section class="block" id="funding" aria-labelledby="fund-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">E</span><h2 id="fund-h">Funding and PayPal approval</h2></div>
-      <div id="fundEmpty"><p class="small">Nothing to approve yet. This panel activates when the agents agree and the backend reports <b>awaiting_payment</b>. The hold freezes money — it does not pay the seller.</p></div>
-      <div class="fund await" id="fundAwait" hidden>
-        <p class="fund-label">Agreed amount</p>
-        <div class="fund-amount num" id="fundAmount" aria-live="polite">$—</div>
-        <p class="fund-sub">Awaiting buyer approval. The next step authorizes this amount in <b>PayPal Sandbox</b> — funds are held, not paid out.</p>
-        <a class="btn btn-gold" id="btnApprove" href="#" hidden target="_blank" rel="noopener noreferrer">Approve in PayPal Sandbox</a>
-        <p class="small" style="margin-top:12px">Opens the approval URL returned by the backend. Approve with a sandbox buyer account, then come back and refresh.</p>
-        <div class="btn-row"><button type="button" class="btn btn-ghost" id="btnRefreshFund">Refresh deal state</button></div>
-      </div>
-      <div class="fund held" id="fundHeld" hidden>
-        <p class="held-line"><span class="tick" aria-hidden="true">✓</span><span>Funds authorized · Held in escrow</span></p>
-        <div class="fund-amount num" id="heldAmount" aria-live="polite">$—</div>
-        <p class="fund-sub" id="heldSub">The authorized amount is frozen. Next: the seller submits the work.</p>
-      </div>
-      <div class="form-error" id="fundError" role="alert"></div>
+  <section id="funding">
+    <div class="section-head reveal">
+      <span class="section-num">04 / FUND</span>
+      <div><h2 class="section-title">Authorize the hold.</h2><p class="section-sub">The agreed amount is frozen in PayPal Sandbox. No payout yet. The seller gets nothing until the arbiter decides.</p></div>
     </div>
+    <div id="fundEmpty" class="reveal"><p style="color:var(--muted);font-size:15px;max-width:560px">Nothing to approve yet. This panel activates when agents agree and the backend reports <b style="color:var(--ink)">awaiting_payment</b>.</p></div>
+    <div class="fund await reveal" id="fundAwait" hidden>
+      <p class="fund-label">Agreed amount</p>
+      <div class="fund-amount" id="fundAmount" aria-live="polite">$—</div>
+      <p class="fund-sub">Awaiting buyer approval. The next step authorizes this amount in PayPal Sandbox — funds are held, not paid out.</p>
+      <a class="approve-btn" id="btnApprove" href="#" hidden target="_blank" rel="noopener noreferrer">Approve in PayPal Sandbox →</a>
+      <p style="color:var(--muted);font-size:12px;margin-top:16px;font-family:var(--mono)">Opens the approval URL returned by the backend. Approve with a sandbox buyer account, then return and refresh.</p>
+      <div class="btn-row" style="margin-top:20px"><button type="button" class="btn btn-ghost btn-sm" id="btnRefreshFund">Refresh deal state</button></div>
+    </div>
+    <div class="fund held reveal" id="fundHeld" hidden>
+      <p class="held-line"><span class="tick" aria-hidden="true">✓</span><span>Funds authorized · Held in escrow</span></p>
+      <div class="fund-amount" id="heldAmount" aria-live="polite">$—</div>
+      <p class="fund-sub" id="heldSub">The authorized amount is frozen. Next: the seller submits the work.</p>
+    </div>
+    <div class="form-error" id="fundError" role="alert"></div>
   </section>
 
   <!-- F. DELIVERY -->
-  <section class="block" id="delivery" aria-labelledby="del-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">F</span><h2 id="del-h">Seller delivery</h2></div>
-      <div id="delExpected"><p class="small">Submit the work for the deliverables below. The arbiter compares this text against each requested item.</p>
-      <ul class="criteria" id="expectedList" aria-label="Requested deliverables"></ul></div>
+  <section id="delivery">
+    <div class="section-head reveal">
+      <span class="section-num">05 / DELIVER</span>
+      <div><h2 class="section-title">Submit the work.</h2><p class="section-sub">The arbiter compares this text against each requested deliverable. Be specific — evidence is everything.</p></div>
+    </div>
+    <div style="max-width:720px">
+      <p class="flabel" style="margin-bottom:12px">Requested deliverables</p>
+      <ul class="criteria" id="expectedList" aria-label="Requested deliverables" style="margin-bottom:32px"></ul>
       <form id="deliverForm">
         <div class="field">
-          <label class="flabel" for="fSubmission">Submission text, links and evidence <span class="req" aria-hidden="true">*</span></label>
+          <label class="flabel" for="fSubmission">Submission text, links and evidence <span class="req">*</span></label>
           <textarea id="fSubmission" placeholder="Delivered logo.svg and logo.png (1024px). Two color variants: dark and light." maxlength="10000"></textarea>
-          <p class="fhint"><span id="subCount" class="num">0</span> / 10000 characters.</p>
+          <p class="fhint"><span id="subCount">0</span> / 10000 characters.</p>
         </div>
-        <div class="btn-row"><button type="submit" class="btn btn-primary" id="btnDeliver" disabled><span class="spinner" aria-hidden="true"></span><span id="btnDeliverLabel">Submit deliverables</span></button></div>
+        <div class="btn-row">
+          <button type="submit" class="btn" id="btnDeliver" disabled><span class="spinner" aria-hidden="true"></span><span id="btnDeliverLabel">Submit deliverables</span></button>
+        </div>
         <div class="form-error" id="deliverError" role="alert"></div>
         <div class="form-ok" id="deliverOk" role="status"></div>
       </form>
@@ -426,593 +434,208 @@ footer.site code{font-family:var(--mono);color:var(--mut)}
   </section>
 
   <!-- G. ARBITER -->
-  <section class="block" id="arbiter" aria-labelledby="arb-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">G</span><h2 id="arb-h">AI arbitration and settlement</h2></div>
-      <p class="small">The arbiter checks the submission against every deliverable; the backend moves the held money — full capture, partial capture, or void. The page never decides amounts.</p>
-      <div class="btn-row"><button type="button" class="btn btn-primary" id="btnJudge" disabled><span class="spinner" aria-hidden="true"></span><span id="btnJudgeLabel">Evaluate deliverables with AI</span></button></div>
-      <p class="judge-status" id="judgeStatus">No evaluation yet.</p>
-      <div class="form-error" id="judgeError" role="alert"></div>
-      <div id="verdictWrap" hidden>
-        <div class="verdict-bar" id="verdictBar">
-          <div class="verdict-top"><span class="verdict-word" id="verdictWord">—</span><span class="verdict-pct num" id="verdictPct"></span></div>
-          <div class="meter" aria-hidden="true"><i id="verdictMeter" style="width:0%"></i></div>
-          <p class="coverage" id="coverage"></p>
-          <div class="moneyline">
-            <div>Agreed<b class="num" id="mAgreed">—</b></div>
-            <div>Released to seller<b class="num" id="mReleased">—</b></div>
-            <div>Returned to buyer<b class="num" id="mReturned">—</b></div>
-          </div>
-          <p class="txref" id="txRef" hidden>Transaction reference: <b id="txId"></b></p>
-          <p class="summary" id="arbSummary"></p>
+  <section id="arbiter">
+    <div class="section-head reveal">
+      <span class="section-num">06 / SETTLE</span>
+      <div><h2 class="section-title">The arbiter decides.</h2><p class="section-sub">Each deliverable checked independently. Full capture, partial capture, or void. The page never decides amounts — the backend does.</p></div>
+    </div>
+    <div class="btn-row reveal d1">
+      <button type="button" class="btn" id="btnJudge" disabled><span class="spinner" aria-hidden="true"></span><span id="btnJudgeLabel">Evaluate deliverables with AI</span></button>
+    </div>
+    <p class="judge-status reveal d1" id="judgeStatus">No evaluation yet.</p>
+    <div class="form-error" id="judgeError" role="alert"></div>
+    <div id="verdictWrap" hidden class="reveal d2">
+      <div class="verdict" id="verdictBar">
+        <div class="verdict-top"><span class="verdict-word" id="verdictWord">—</span><span class="verdict-pct" id="verdictPct"></span></div>
+        <div class="meter" aria-hidden="true"><i id="verdictMeter" style="width:0%"></i></div>
+        <p class="coverage" id="coverage"></p>
+        <div class="moneyline">
+          <div>Agreed<b id="mAgreed">—</b></div>
+          <div>Released to seller<b id="mReleased">—</b></div>
+          <div>Returned to buyer<b id="mReturned">—</b></div>
         </div>
-        <ul class="criteria" id="criteriaList" aria-label="Per-deliverable evaluation"></ul>
+        <p class="txref" id="txRef" hidden>Transaction reference: <b id="txId"></b></p>
+        <p class="summary" id="arbSummary"></p>
       </div>
+      <ul class="criteria" id="criteriaList" aria-label="Per-deliverable evaluation" style="margin-top:20px"></ul>
     </div>
   </section>
 
   <!-- H. AUDIT -->
-  <section class="block" id="audit" aria-labelledby="aud-h">
-    <div class="panel">
-      <div class="panel-head"><span class="panel-index">H</span><h2 id="aud-h">Audit and transparency</h2></div>
-      <p class="small">Read-only view from <b>GET /api/deals/:id/audit</b>. Only safe fields are shown — limits and authorization identifiers are filtered out even if present.</p>
-      <div class="audit-tools">
-        <button type="button" class="btn btn-ghost btn-sm" id="btnAudit">Load audit trail</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="btnRefreshDeal">Refresh deal</button>
-      </div>
-      <div class="form-error" id="auditError" role="alert"></div>
-      <ol class="timeline" id="auditTimeline"></ol>
-      <details class="raw">
-        <summary>Filtered audit payload (safe fields only)</summary>
-        <div class="audit-pre" id="auditRaw" tabindex="0" role="region" aria-label="Filtered audit payload">No audit loaded.</div>
-      </details>
+  <section id="audit">
+    <div class="section-head reveal">
+      <span class="section-num">07 / AUDIT</span>
+      <div><h2 class="section-title">Full transparency.</h2><p class="section-sub">Read-only trail from the backend. Limits and authorization identifiers are filtered out even if present.</p></div>
     </div>
+    <div class="audit-tools reveal d1">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnAudit">Load audit trail</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnRefreshDeal">Refresh deal</button>
+    </div>
+    <div class="form-error" id="auditError" role="alert"></div>
+    <ol class="timeline" id="auditTimeline"></ol>
+    <details class="raw">
+      <summary>Filtered audit payload (safe fields only)</summary>
+      <div class="audit-pre" id="auditRaw" tabindex="0" role="region" aria-label="Filtered audit payload">No audit loaded.</div>
+    </details>
   </section>
   </div>
-</main>
 
-<footer class="site"><div class="wrap">
-  <p>DEALROOM demo · PayPal Sandbox (<code>api-m.sandbox.paypal.com</code>) · Orders v2 AUTHORIZE → Payments v2 capture / void · No real money moves. Run locally: <code>npm install</code>, fill <code>.env</code>, <code>npm start</code>, open <code>http://localhost:3000</code>. Demo in 2 minutes: create → approve as sandbox buyer → deliver → judge.</p>
-</div></footer>
+  <footer class="site"><div class="wrap">
+    <p>DEALROOM demo · PayPal Sandbox · Orders v2 AUTHORIZE → Payments v2 capture / void · No real money moves.</p>
+    <p style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted-2)">Run locally: npm install · fill .env · npm start · open localhost:3000 · tests: npm test (6/6)</p>
+  </div></footer>
+</main>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-/* ================= API layer (contract: backend is the only source of truth) ================= */
 const api = {
   async req(path, opts) {
     let res;
     try { res = await fetch(path, opts); }
-    catch { throw new Error("Network error. Is the backend running on this host?"); }
+    catch { throw new Error("Network error. Is the backend running?"); }
     let data = null;
     try { data = await res.json(); } catch { data = null; }
     if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
     return data || {};
   },
-  createDeal(payload) {
-    return api.req("/api/deals", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
-  },
+  createDeal(p) { return api.req("/api/deals", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(p) }); },
   getDeal(id) { return api.req("/api/deals/" + encodeURIComponent(id)); },
-  deliver(id, submission) {
-    return api.req("/api/deals/" + encodeURIComponent(id) + "/deliver",
-      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ submission }) });
-  },
+  deliver(id, s) { return api.req("/api/deals/" + encodeURIComponent(id) + "/deliver", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ submission: s }) }); },
   judge(id) { return api.req("/api/deals/" + encodeURIComponent(id) + "/judge", { method: "POST" }); },
   audit(id) { return api.req("/api/deals/" + encodeURIComponent(id) + "/audit"); },
-  async health() {
-    try {
-      const res = await fetch("/health");
-      if (!res.ok) return false;
-      const d = await res.json();
-      return d && d.ok === true;
-    } catch { return false; }
-  }
+  async health() { try { const r = await fetch("/health"); if (!r.ok) return false; const d = await r.json(); return d && d.ok === true; } catch { return false; } }
 };
-/* ================= state ================= */
 const S = { dealId: null, deal: null, es: null, streamSeq: 0, seenTurns: new Set(), busy: { create: false, deliver: false, judge: false, refresh: false } };
 const $ = (id) => document.getElementById(id);
 const els = {};
-["healthBadge","healthText","dealPill","dealPillTitle","dealPillStatus","createForm","fTitle","fBuyerMax","fSellerMin","fCategory","fCurrency","fDeliverables","btnCreate","btnCreateLabel","createError","createOk",
- "loadForm","fDealId","btnLoad","loadError","colBuyer","colSeller","sseDot","sseText","sseError","track","trackerNote","stage5label","stage5sub",
+["healthBadge","healthText","cornerStatus","createForm","fTitle","fBuyerMax","fSellerMin","fCategory","fCurrency","fDeliverables","btnCreate","btnCreateLabel","createError","createOk",
+ "loadForm","fDealId","btnLoad","loadError","colBuyer","colSeller","buyerCount","sellerCount","sseDot","sseText","sseError","track","trackerNote","stage5label","stage5sub",
  "fundEmpty","fundAwait","fundHeld","fundAmount","heldAmount","heldSub","btnApprove","btnRefreshFund","fundError",
  "expectedList","deliverForm","fSubmission","subCount","btnDeliver","btnDeliverLabel","deliverError","deliverOk",
  "btnJudge","btnJudgeLabel","judgeStatus","judgeError","verdictWrap","verdictBar","verdictWord","verdictPct","verdictMeter","coverage",
  "mAgreed","mReleased","mReturned","txRef","txId","arbSummary","criteriaList",
- "btnAudit","btnRefreshDeal","auditError","auditTimeline","auditRaw","heroAmount","heroState","toast","btnCopyId"
-].forEach((id) => { els[id] = document.getElementById(id); });
-/* ================= helpers ================= */
-function showToast(msg, isError) {
-  els.toast.textContent = msg;
-  els.toast.classList.toggle("error", !!isError);
-  els.toast.classList.add("show");
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => els.toast.classList.remove("show"), 3600);
-}
-function setBusy(btn, labelEl, busy, text) {
-  btn.disabled = busy;
-  btn.classList.toggle("loading", busy);
-  if (labelEl && text) labelEl.textContent = text;
-  syncActionStates();
-}
-function showErr(box, msg) { box.textContent = msg; box.classList.add("show"); }
-function hideErr(box) { box.textContent = ""; box.classList.remove("show"); }
-function money(v, currency) {
-  const n = Number(v);
-  if (v === null || v === undefined || !isFinite(n)) return "—";
-  const cur = currency || (S.deal && S.deal.currency) || "USD";
-  return "$" + n.toFixed(2) + " " + cur;
-}
-function el(tag, cls, text) {
-  const n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (text !== undefined && text !== null) n.textContent = text;
-  return n;
-}
-/* Defense in depth: strip anything confidential from any backend payload before it touches state. */
-function scrubDeal(d) {
-  if (!d || typeof d !== "object") return d;
-  const copy = Object.assign({}, d);
-  delete copy.buyerMax; delete copy.sellerMin; delete copy.authorizationId;
-  delete copy.maxBudget; delete copy.clientSecret; delete copy.secret;
-  return copy;
-}
-const SAFE_AUDIT_KEYS = new Set(["id","title","category","deliverables","currency","status","turns","price","orderId","approveUrl","submission","decision","payment","paymentError","authorizationExpiresAt","createdAt","updatedAt","mandate"]);
-function safeAudit(src) {
-  if (!src || typeof src !== "object") return {};
-  const out = {};
-  for (const k of Object.keys(src)) {
-    if (!SAFE_AUDIT_KEYS.has(k)) continue;
-    if (k === "mandate" && src.mandate && typeof src.mandate === "object") {
-      out.mandate = { categories: src.mandate.categories, expiresAt: src.mandate.expiresAt, hasBudget: true };
-    } else if (k === "payment" && src.payment && typeof src.payment === "object") {
-      out.payment = { status: src.payment.status, captureId: src.payment.captureId, id: src.payment.id, amount: src.payment.amount };
-    } else out[k] = src[k];
-  }
-  return out;
-}
-/* ================= health ================= */
-async function checkHealth() {
-  const ok = await api.health();
-  els.healthBadge.classList.toggle("ok", ok);
-  els.healthBadge.classList.toggle("bad", !ok);
-  els.healthText.textContent = ok ? "Backend online" : "Backend unreachable";
-}
-/* ================= deal creation ================= */
+ "btnAudit","btnRefreshDeal","auditError","auditTimeline","auditRaw","heroAmount","heroState","toast","btnCopyId"].forEach((id) => { els[id] = document.getElementById(id); });
+function showToast(msg, err) { els.toast.textContent = msg; els.toast.classList.toggle("error", !!err); els.toast.classList.add("show"); clearTimeout(showToast._t); showToast._t = setTimeout(() => els.toast.classList.remove("show"), 3600); }
+function setBusy(btn, lab, busy, text) { btn.disabled = busy; btn.classList.toggle("loading", busy); if (lab && text) lab.textContent = text; syncActions(); }
+function showErr(b, m) { b.textContent = m; b.classList.add("show"); }
+function hideErr(b) { b.textContent = ""; b.classList.remove("show"); }
+function money(v, c) { const n = Number(v); if (v === null || v === undefined || !isFinite(n)) return "—"; return "$" + n.toFixed(2) + " " + (c || (S.deal && S.deal.currency) || "USD"); }
+function el(t, cls, txt) { const n = document.createElement(t); if (cls) n.className = cls; if (txt !== undefined && txt !== null) n.textContent = txt; return n; }
+function scrub(d) { if (!d || typeof d !== "object") return d; const c = Object.assign({}, d); delete c.buyerMax; delete c.sellerMin; delete c.authorizationId; delete c.maxBudget; return c; }
+const SAFE = new Set(["id","title","category","deliverables","currency","status","turns","price","orderId","approveUrl","submission","decision","payment","paymentError","authorizationExpiresAt","createdAt","updatedAt","mandate"]);
+function safeAudit(src) { if (!src || typeof src !== "object") return {}; const out = {}; for (const k of Object.keys(src)) { if (!SAFE.has(k)) continue; if (k === "mandate" && src.mandate && typeof src.mandate === "object") out.mandate = { categories: src.mandate.categories, expiresAt: src.mandate.expiresAt, hasBudget: true }; else if (k === "payment" && src.payment && typeof src.payment === "object") out.payment = { status: src.payment.status, captureId: src.payment.captureId, id: src.payment.id, amount: src.payment.amount }; else out[k] = src[k]; } return out; }
+async function checkHealth() { const ok = await api.health(); els.healthBadge.classList.toggle("ok", ok); els.healthBadge.classList.toggle("bad", !ok); els.healthText.textContent = ok ? "Backend online" : "Backend unreachable"; els.cornerStatus.textContent = ok ? "ONLINE" : "OFFLINE"; }
 function validateCreate() {
-  const title = els.fTitle.value.trim();
-  const delivs = els.fDeliverables.value.split("\n").map((s) => s.trim()).filter(Boolean);
-  const buyerMax = Number(els.fBuyerMax.value);
-  const sellerMin = Number(els.fSellerMin.value);
-  const currency = (els.fCurrency.value.trim() || "USD").toUpperCase();
-  const problems = [];
-  const mark = (node, bad) => node.setAttribute("aria-invalid", bad ? "true" : "false");
-  mark(els.fTitle, !title || title.length > 200);
-  mark(els.fDeliverables, !delivs.length || delivs.length > 20);
-  mark(els.fBuyerMax, !(buyerMax > 0));
-  mark(els.fSellerMin, !(sellerMin > 0));
-  mark(els.fCurrency, !/^[A-Z]{3}$/.test(currency));
-  if (!title) problems.push("title is required");
-  else if (title.length > 200) problems.push("title is too long");
-  if (!delivs.length) problems.push("add at least one deliverable");
-  else if (delivs.length > 20) problems.push("too many deliverables (max 20)");
-  if (!(buyerMax > 0)) problems.push("buyer maximum must be positive");
-  if (!(sellerMin > 0)) problems.push("seller minimum must be positive");
+  const title = els.fTitle.value.trim(); const delivs = els.fDeliverables.value.split("\n").map((s) => s.trim()).filter(Boolean);
+  const buyerMax = Number(els.fBuyerMax.value); const sellerMin = Number(els.fSellerMin.value); const currency = (els.fCurrency.value.trim() || "USD").toUpperCase();
+  const problems = []; const mark = (n, b) => n.setAttribute("aria-invalid", b ? "true" : "false");
+  mark(els.fTitle, !title || title.length > 200); mark(els.fDeliverables, !delivs.length || delivs.length > 20); mark(els.fBuyerMax, !(buyerMax > 0)); mark(els.fSellerMin, !(sellerMin > 0)); mark(els.fCurrency, !/^[A-Z]{3}$/.test(currency));
+  if (!title) problems.push("title is required"); else if (title.length > 200) problems.push("title is too long");
+  if (!delivs.length) problems.push("add at least one deliverable"); else if (delivs.length > 20) problems.push("too many deliverables");
+  if (!(buyerMax > 0)) problems.push("buyer maximum must be positive"); if (!(sellerMin > 0)) problems.push("seller minimum must be positive");
   if (!/^[A-Z]{3}$/.test(currency)) problems.push("currency must be a 3-letter code");
   return { problems, payload: { title, category: els.fCategory.value.trim() || "general", deliverables: delivs, buyerMax, sellerMin, currency } };
 }
 async function createDeal(e) {
-  e.preventDefault();
-  if (S.busy.create) return;
-  hideErr(els.createError); els.createOk.classList.remove("show");
-  const v = validateCreate();
-  if (v.problems.length) { showErr(els.createError, v.problems.join(". ") + "."); return; }
-  const payload = v.payload;
-  S.busy.create = true;
-  setBusy(els.btnCreate, els.btnCreateLabel, true, "Starting negotiation…");
-  try {
-    const created = await api.createDeal(payload);
-    if (!created || !created.id) throw new Error("Backend did not return a deal id.");
-    // Clear confidential inputs immediately; never render them again.
-    els.fBuyerMax.value = ""; els.fSellerMin.value = "";
-    els.createOk.textContent = "Deal created. Negotiation starting below.";
-    els.createOk.classList.add("show");
-    await selectDeal(created.id, true);
-  } catch (err) { showErr(els.createError, err.message); }
+  e.preventDefault(); if (S.busy.create) return; hideErr(els.createError); els.createOk.classList.remove("show");
+  const v = validateCreate(); if (v.problems.length) { showErr(els.createError, v.problems.join(". ") + "."); return; }
+  S.busy.create = true; setBusy(els.btnCreate, els.btnCreateLabel, true, "Negotiating…");
+  try { const c = await api.createDeal(v.payload); if (!c || !c.id) throw new Error("No deal id returned."); els.fBuyerMax.value = ""; els.fSellerMin.value = ""; els.createOk.textContent = "Deal created. Negotiation starting below."; els.createOk.classList.add("show"); await selectDeal(c.id, true); }
+  catch (err) { showErr(els.createError, err.message); }
   finally { S.busy.create = false; setBusy(els.btnCreate, els.btnCreateLabel, false, "Start AI Negotiation"); }
 }
-async function loadDealById(e) {
-  e.preventDefault();
-  hideErr(els.loadError);
-  const id = els.fDealId.value.trim();
-  if (!id) { showErr(els.loadError, "Paste a deal ID first."); return; }
-  try { await selectDeal(id, false); }
-  catch (err) { showErr(els.loadError, err.message); }
-}
-async function selectDeal(id, fresh) {
-  unsubscribeSSE();
-  S.seenTurns = new Set();
-  const deal = scrubDeal(await api.getDeal(id));
-  if (!deal || !deal.id) throw new Error("Deal not found.");
-  S.dealId = deal.id; S.deal = deal;
-  try { history.replaceState(null, "", "/?deal=" + encodeURIComponent(deal.id)); } catch {}
-  renderAll();
-  subscribeSSE(fresh);
-}
-/* ================= state normalization + tracker ================= */
-function stageFor(status) {
-  switch (status) {
-    case "created": case "negotiating": return 1;
-    case "awaiting_payment": case "authorizing": case "payment_cancelled": case "payment_failed": return 2;
-    case "funded": return 3;
-    case "delivered": case "judging": return 4;
-    case "released": case "partially_released": case "refunded": return 5;
-    case "no_deal": case "error": default: return 0;
-  }
-}
+async function loadDealById(e) { e.preventDefault(); hideErr(els.loadError); const id = els.fDealId.value.trim(); if (!id) { showErr(els.loadError, "Paste a deal ID first."); return; } try { await selectDeal(id, false); } catch (err) { showErr(els.loadError, err.message); } }
+async function selectDeal(id, fresh) { unsubscribeSSE(); S.seenTurns = new Set(); const deal = scrub(await api.getDeal(id)); if (!deal || !deal.id) throw new Error("Deal not found."); S.dealId = deal.id; S.deal = deal; try { history.replaceState(null, "", "/?deal=" + encodeURIComponent(deal.id)); } catch {} renderAll(); subscribeSSE(fresh); }
+function stageFor(s) { switch (s) { case "created": case "negotiating": return 1; case "awaiting_payment": case "authorizing": case "payment_cancelled": case "payment_failed": return 2; case "funded": return 3; case "delivered": case "judging": return 4; case "released": case "partially_released": case "refunded": return 5; default: return 0; } }
 function renderTracker() {
-  const st = S.deal ? S.deal.status : null;
-  const stage = st ? stageFor(st) : 0;
-  const terminal = ["released","partially_released","refunded"].includes(st);
-  const failed = ["no_deal","error","payment_cancelled","payment_failed"].includes(st);
+  const st = S.deal ? S.deal.status : null; const stage = st ? stageFor(st) : 0; const terminal = ["released","partially_released","refunded"].includes(st); const failed = ["no_deal","error","payment_cancelled","payment_failed"].includes(st);
   const steps = Array.from(els.track.querySelectorAll(".tstep"));
-  steps.forEach((sEl) => {
-    const n = Number(sEl.dataset.stage);
-    sEl.classList.remove("done", "active", "amber", "failed", "rest");
-    sEl.removeAttribute("aria-current");
+  steps.forEach((sEl) => { const n = Number(sEl.dataset.stage); sEl.classList.remove("done","active","amber","failed","rest"); sEl.removeAttribute("aria-current");
     if (!st || stage === 0) { sEl.classList.add("rest"); return; }
-    if (terminal && n <= 5) {
-      if (n < 5) sEl.classList.add("done");
-      if (n === 5) { sEl.classList.add("done"); }
-      return;
-    }
-    if (n < stage) sEl.classList.add("done");
-    else if (n === stage) {
-      sEl.classList.add(failed ? "failed" : "active");
-      sEl.setAttribute("aria-current", "step");
-      if (n === 2) sEl.classList.add("amber");
-    } else sEl.classList.add("rest");
+    if (terminal) { if (n < 5) sEl.classList.add("done"); if (n === 5) sEl.classList.add("done"); return; }
+    if (n < stage) sEl.classList.add("done"); else if (n === stage) { sEl.classList.add(failed ? "failed" : "active"); sEl.setAttribute("aria-current","step"); if (n === 2) sEl.classList.add("amber"); } else sEl.classList.add("rest");
   });
   if (st === "released") { els.stage5label.textContent = "Released"; els.stage5sub.textContent = "100% captured"; }
   else if (st === "partially_released") { els.stage5label.textContent = "Partially released"; els.stage5sub.textContent = ((S.deal.decision && S.deal.decision.releasePercent) || "") + "% captured"; }
   else if (st === "refunded") { els.stage5label.textContent = "Refunded"; els.stage5sub.textContent = "authorization voided"; }
   else { els.stage5label.textContent = "Settled"; els.stage5sub.textContent = "release · split · void"; }
-  const notes = {
-    created: "Deal created. Negotiation has not started streaming yet.", negotiating: "Agents are exchanging offers.",
-    authorizing: "Placing the PayPal hold…",
-    awaiting_payment: "Agreed. Waiting for the buyer to authorize the hold in PayPal Sandbox.",
-    payment_cancelled: "Buyer cancelled the PayPal approval. This deal cannot proceed — create a new one.",
-    payment_failed: "A payment step failed. Nothing is shown as settled.",
-    funded: "Hold is active. The seller can now submit the work.",
-    delivered: "Work submitted. Ready for AI evaluation.", judging: "Arbiter is evaluating…",
-    released: "Settled: full amount captured to the seller.", partially_released: "Settled: partial capture, remainder returned to buyer.",
-    refunded: "Settled: authorization voided, buyer not charged.",
-    no_deal: "No agreement — the confidential limits did not overlap. This deal is over; create a new one.",
-    error: "The backend reported an error state."
-  };
+  const notes = { created: "Deal created. Negotiation has not started streaming yet.", negotiating: "Agents are exchanging offers.", authorizing: "Placing the PayPal hold…", awaiting_payment: "Agreed. Waiting for the buyer to authorize the hold in PayPal Sandbox.", payment_cancelled: "Buyer cancelled the PayPal approval. This deal cannot proceed.", payment_failed: "A payment step failed. Nothing is shown as settled.", funded: "Hold is active. The seller can now submit the work.", delivered: "Work submitted. Ready for AI evaluation.", judging: "Arbiter is evaluating…", released: "Settled: full amount captured to the seller.", partially_released: "Settled: partial capture, remainder returned to buyer.", refunded: "Settled: authorization voided, buyer not charged.", no_deal: "No agreement — the confidential limits did not overlap.", error: "The backend reported an error state." };
   els.trackerNote.textContent = st ? (notes[st] || ("Status: " + st)) : "Create a deal to begin tracking.";
   els.heroState.textContent = st ? st.replace(/_/g, " ") : "No deal yet";
-  // Sticky mini status in the header.
-  if (S.deal) {
-    els.dealPill.classList.add("show");
-    els.dealPillTitle.textContent = S.deal.title || "Deal";
-    els.dealPillStatus.textContent = (st || "").replace(/_/g, " ");
-  } else els.dealPill.classList.remove("show");
+  els.heroAmount.textContent = (S.deal && S.deal.price !== null && S.deal.price !== undefined && isFinite(Number(S.deal.price))) ? money(S.deal.price, S.deal.currency) : "$—";
+  els.cornerStatus.textContent = st ? st.replace(/_/g, " ").toUpperCase() : "IDLE";
 }
-/* ================= conversation (SSE) ================= */
-function turnKey(t) {
-  return [t.round, t.side, t.price, t.action, t.message, !!t.blocked].join("|");
-}
+function turnKey(t) { return [t.round, t.side, t.price, t.action, t.message, !!t.blocked].join("|"); }
 function clearConvo() { els.colBuyer.innerHTML = ""; els.colSeller.innerHTML = ""; }
-function convoPlaceholder() {
-  clearConvo();
-  els.colBuyer.appendChild(el("div", "convo-empty", "No messages yet. Start a negotiation above."));
-  els.colSeller.appendChild(el("div", "convo-empty", "No messages yet. Start a negotiation above."));
-}
+function convoPlaceholder() { clearConvo(); els.colBuyer.appendChild(el("div", "convo-empty", "No messages yet.")); els.colSeller.appendChild(el("div", "convo-empty", "No messages yet.")); }
 function appendTurn(t) {
-  const key = turnKey(t || {});
-  if (S.seenTurns.has(key)) return;
-  S.seenTurns.add(key);
-  const host = (t && t.side) === "seller" ? els.colSeller : els.colBuyer;
-  const empty = host.querySelector(".convo-empty");
-  if (empty) empty.remove();
-  const b = el("div", "bubble" + (t.action === "offer" ? " offer" : "") + (t.blocked ? " blocked" : ""));
-  b.appendChild(el("p", "m", (t && t.message) || "(no message)"));
+  const key = turnKey(t || {}); if (S.seenTurns.has(key)) return; S.seenTurns.add(key);
+  const host = (t && t.side) === "seller" ? els.colSeller : els.colBuyer; const empty = host.querySelector(".convo-empty"); if (empty) empty.remove();
+  const b = el("div", "bubble " + ((t && t.side) === "seller" ? "seller" : "buyer") + (t.action === "offer" ? " offer" : "") + (t.blocked ? " blocked" : ""));
+  b.appendChild(el("p", "text", (t && t.message) || "(no message)"));
   const meta = el("div", "meta");
-  if (t && t.round !== undefined && t.round !== null) meta.appendChild(el("span", "turn-tag", "R" + t.round));
-  if (t && t.price !== undefined && t.price !== null && isFinite(Number(t.price))) {
-    meta.appendChild(el("span", "offer-price num", money(t.price, (S.deal && S.deal.currency) || "USD")));
-  }
+  if (t && t.round !== undefined && t.round !== null) meta.appendChild(el("span", "", "R" + t.round));
+  if (t && t.price !== undefined && t.price !== null && isFinite(Number(t.price))) meta.appendChild(el("span", "price", money(t.price, (S.deal && S.deal.currency) || "USD")));
   if (t && t.action) meta.appendChild(el("span", "", String(t.action)));
-  if (t && t.blocked) meta.appendChild(el("span", "cap", "capped by code"));
-  b.appendChild(meta);
-  host.appendChild(b);
+  if (t && t.blocked) meta.appendChild(el("span", "cap", "capped"));
+  b.appendChild(meta); host.appendChild(b);
+  const buyerN = els.colBuyer.querySelectorAll(".bubble").length; const sellerN = els.colSeller.querySelectorAll(".bubble").length;
+  els.buyerCount.textContent = buyerN ? buyerN + " msgs" : ""; els.sellerCount.textContent = sellerN ? sellerN + " msgs" : "";
 }
-function renderConversation() {
-  clearConvo();
-  S.seenTurns = new Set();
-  const turns = (S.deal && Array.isArray(S.deal.turns)) ? S.deal.turns : [];
-  if (!turns.length) { convoPlaceholder(); return; }
-  turns.forEach((t) => appendTurn(t || {}));
-}
-function setSSE(state, text) {
-  els.sseDot.className = "sse-dot" + (state ? " " + state : "");
-  els.sseText.textContent = text;
-}
-function unsubscribeSSE() {
-  S.streamSeq++;
-  if (S.es) { try { S.es.close(); } catch {} S.es = null; }
-}
+function renderConversation() { clearConvo(); S.seenTurns = new Set(); const turns = (S.deal && Array.isArray(S.deal.turns)) ? S.deal.turns : []; if (!turns.length) { convoPlaceholder(); return; } turns.forEach((t) => appendTurn(t || {})); }
+function setSSE(state, text) { els.sseDot.className = "sse-dot" + (state ? " " + state : ""); els.sseText.textContent = text; }
+function unsubscribeSSE() { S.streamSeq++; if (S.es) { try { S.es.close(); } catch {} S.es = null; } }
 function subscribeSSE(fresh) {
-  if (!S.dealId) return;
-  unsubscribeSSE();
-  hideErr(els.sseError);
-  const seq = S.streamSeq;
-  let es;
-  try { es = new EventSource("/api/deals/" + encodeURIComponent(S.dealId) + "/events"); }
-  catch { showErr(els.sseError, "Streaming is not available in this browser."); return; }
-  S.es = es;
-  let fails = 0;
-  let agreedTimer = null;
-  setSSE("live", fresh ? "Negotiating live…" : "Syncing deal state…");
+  if (!S.dealId) return; unsubscribeSSE(); hideErr(els.sseError); const seq = S.streamSeq; let es;
+  try { es = new EventSource("/api/deals/" + encodeURIComponent(S.dealId) + "/events"); } catch { showErr(els.sseError, "Streaming unavailable."); return; }
+  S.es = es; let fails = 0; let agreedTimer = null; setSSE("live", fresh ? "Negotiating live…" : "Syncing…");
   const alive = () => S.es === es && seq === S.streamSeq;
-  es.onmessage = (ev) => {
-    if (!alive()) return;
-    let m;
-    try { m = JSON.parse(ev.data); }
-    catch { return; }
-    if (!m || typeof m.type !== "string") return;
-    if (m.type === "turn" && m.turn && typeof m.turn === "object") {
-      appendTurn(m.turn);
-      setSSE("live", "Negotiating live…");
-    } else if (m.type === "agreed") {
-      setSSE("live", "Agreement reached. Creating PayPal order…");
-      clearTimeout(agreedTimer);
-      agreedTimer = setTimeout(() => {
-        if (!alive()) return;
-        if (S.deal && S.deal.status === "negotiating") refreshDeal().catch((e) => showErr(els.sseError, e.message));
-      }, 6000);
-    } else if (m.type === "no_deal") {
-      setSSE("done", "No agreement.");
-      clearTimeout(agreedTimer);
-      refreshDeal().catch((e) => showErr(els.sseError, e.message));
-      es.close(); if (alive()) S.es = null;
-    } else if (m.type === "state" && m.deal && typeof m.deal === "object") {
-      clearTimeout(agreedTimer);
-      S.deal = scrubDeal(m.deal);
-      renderAll();
-      setSSE("done", "Stream complete.");
-      es.close(); if (alive()) S.es = null;
-    } else if (m.type === "error") {
-      clearTimeout(agreedTimer);
-      showErr(els.sseError, typeof m.message === "string" && m.message ? m.message : "Negotiation stream reported an error.");
-      setSSE("err", "Stream error.");
-      es.close(); if (alive()) S.es = null;
-    }
+  es.onmessage = (ev) => { if (!alive()) return; let m; try { m = JSON.parse(ev.data); } catch { return; } if (!m || typeof m.type !== "string") return;
+    if (m.type === "turn" && m.turn && typeof m.turn === "object") { appendTurn(m.turn); setSSE("live", "Negotiating live…"); }
+    else if (m.type === "agreed") { setSSE("live", "Agreement reached. Creating PayPal order…"); clearTimeout(agreedTimer); agreedTimer = setTimeout(() => { if (!alive()) return; if (S.deal && S.deal.status === "negotiating") refreshDeal().catch((e) => showErr(els.sseError, e.message)); }, 6000); }
+    else if (m.type === "no_deal") { setSSE("done", "No agreement."); clearTimeout(agreedTimer); refreshDeal().catch((e) => showErr(els.sseError, e.message)); es.close(); if (alive()) S.es = null; }
+    else if (m.type === "state" && m.deal && typeof m.deal === "object") { clearTimeout(agreedTimer); S.deal = scrub(m.deal); renderAll(); setSSE("done", "Stream complete."); es.close(); if (alive()) S.es = null; }
+    else if (m.type === "error") { clearTimeout(agreedTimer); showErr(els.sseError, typeof m.message === "string" && m.message ? m.message : "Stream error."); setSSE("err", "Stream error."); es.close(); if (alive()) S.es = null; }
   };
-  es.onerror = () => {
-    if (!alive()) return;
-    if (es.readyState === EventSource.CLOSED) { setSSE("", "Stream closed."); return; }
-    fails++;
-    if (fails > 5) {
-      showErr(els.sseError, "Stream is unstable. Refresh the deal to resync.");
-      setSSE("err", "Stream error.");
-      es.close(); if (alive()) S.es = null;
-    } else setSSE("", "Reconnecting…");
-  };
+  es.onerror = () => { if (!alive()) return; if (es.readyState === EventSource.CLOSED) { setSSE("", "Stream closed."); return; } fails++; if (fails > 5) { showErr(els.sseError, "Stream unstable. Refresh the deal."); setSSE("err", "Stream error."); es.close(); if (alive()) S.es = null; } else setSSE("", "Reconnecting…"); };
 }
-/* ================= funding ================= */
 function renderFunding() {
-  hideErr(els.fundError);
-  const d = S.deal;
-  const awaiting = !!(d && d.status === "awaiting_payment");
-  const held = !!(d && d.status === "funded");
-  els.fundEmpty.hidden = awaiting || held;
-  els.fundAwait.hidden = !awaiting;
-  els.fundHeld.hidden = !held;
-  if (awaiting) {
-    els.fundAmount.textContent = money(d.price, d.currency);
-    const url = typeof d.approveUrl === "string" ? d.approveUrl : "";
-    if (/^https:\/\//.test(url)) { els.btnApprove.href = url; els.btnApprove.hidden = false; }
-    else { els.btnApprove.hidden = true; showErr(els.fundError, "Backend did not return a valid approval link for this deal."); }
-  } else els.btnApprove.hidden = true;
-  if (held) {
-    els.heldAmount.textContent = money(d.price, d.currency);
-    els.heldSub.textContent = "The authorized amount is frozen. Next: the seller submits the work.";
-  }
-  els.heroAmount.textContent = (d && d.price !== null && d.price !== undefined && isFinite(Number(d.price)))
-    ? money(d.price, d.currency) : "$—";
+  hideErr(els.fundError); const d = S.deal; const awaiting = !!(d && d.status === "awaiting_payment"); const held = !!(d && d.status === "funded");
+  els.fundEmpty.hidden = awaiting || held; els.fundAwait.hidden = !awaiting; els.fundHeld.hidden = !held;
+  if (awaiting) { els.fundAmount.textContent = money(d.price, d.currency); const url = typeof d.approveUrl === "string" ? d.approveUrl : ""; if (/^https:\/\//.test(url)) { els.btnApprove.href = url; els.btnApprove.hidden = false; } else { els.btnApprove.hidden = true; showErr(els.fundError, "Backend did not return a valid approval link."); } } else els.btnApprove.hidden = true;
+  if (held) { els.heldAmount.textContent = money(d.price, d.currency); els.heldSub.textContent = "The authorized amount is frozen. Next: the seller submits the work."; }
 }
-async function refreshDeal() {
-  if (!S.dealId) return;
-  S.deal = scrubDeal(await api.getDeal(S.dealId));
-  renderAll();
-}
-/* ================= delivery ================= */
-function renderExpected() {
-  els.expectedList.innerHTML = "";
-  const items = (S.deal && Array.isArray(S.deal.deliverables)) ? S.deal.deliverables : [];
-  if (!items.length) {
-    els.expectedList.appendChild(el("li", "", "No deal loaded yet."));
-    return;
-  }
-  items.forEach((d) => {
-    const li = el("li", "");
-    li.appendChild(el("div", "cn", String(d)));
-    els.expectedList.appendChild(li);
-  });
-  if (S.deal && S.deal.submission) {
-    const li = el("li", "met");
-    li.appendChild(el("span", "mark", "✓"));
-    const body = el("div", "");
-    body.appendChild(el("div", "cn", "Submission recorded."));
-    li.appendChild(body);
-    els.expectedList.appendChild(li);
-  }
-}
-async function submitDelivery(e) {
-  e.preventDefault();
-  if (!S.dealId) { showErr(els.deliverError, "Create or load a deal first."); return; }
-  if (S.busy.deliver) return;
-  hideErr(els.deliverError); els.deliverOk.classList.remove("show");
-  const text = els.fSubmission.value.trim();
-  els.fSubmission.setAttribute("aria-invalid", text ? "false" : "true");
-  if (!text) { showErr(els.deliverError, "Describe what was delivered first."); return; }
-  if (text.length > 10000) { showErr(els.deliverError, "Submission is too long (max 10000 characters)."); return; }
-  S.busy.deliver = true;
-  setBusy(els.btnDeliver, els.btnDeliverLabel, true, "Submitting…");
-  try {
-    S.deal = scrubDeal(await api.deliver(S.dealId, text));
-    renderAll();
-    els.deliverOk.textContent = "Delivery recorded. Run the AI evaluation when ready.";
-    els.deliverOk.classList.add("show");
-  } catch (err) { showErr(els.deliverError, err.message); }
-  finally { S.busy.deliver = false; setBusy(els.btnDeliver, els.btnDeliverLabel, false, "Submit deliverables"); }
-}
-/* ================= arbitration ================= */
+async function refreshDeal() { if (!S.dealId) return; S.deal = scrub(await api.getDeal(S.dealId)); renderAll(); }
+function renderExpected() { els.expectedList.innerHTML = ""; const items = (S.deal && Array.isArray(S.deal.deliverables)) ? S.deal.deliverables : []; if (!items.length) { els.expectedList.appendChild(el("li", "", "No deal loaded yet.")); return; } items.forEach((d) => { const li = el("li", ""); li.appendChild(el("div", "cn", String(d))); els.expectedList.appendChild(li); }); if (S.deal && S.deal.submission) { const li = el("li", "met"); li.appendChild(el("span", "mark", "✓")); const b = el("div", ""); b.appendChild(el("div", "cn", "Submission recorded.")); li.appendChild(b); els.expectedList.appendChild(li); } }
+async function submitDelivery(e) { e.preventDefault(); if (!S.dealId) { showErr(els.deliverError, "Create or load a deal first."); return; } if (S.busy.deliver) return; hideErr(els.deliverError); els.deliverOk.classList.remove("show"); const text = els.fSubmission.value.trim(); els.fSubmission.setAttribute("aria-invalid", text ? "false" : "true"); if (!text) { showErr(els.deliverError, "Describe what was delivered first."); return; } if (text.length > 10000) { showErr(els.deliverError, "Submission is too long (max 10000 characters)."); return; } S.busy.deliver = true; setBusy(els.btnDeliver, els.btnDeliverLabel, true, "Submitting…"); try { S.deal = scrub(await api.deliver(S.dealId, text)); renderAll(); els.deliverOk.textContent = "Delivery recorded. Run the AI evaluation when ready."; els.deliverOk.classList.add("show"); } catch (err) { showErr(els.deliverError, err.message); } finally { S.busy.deliver = false; setBusy(els.btnDeliver, els.btnDeliverLabel, false, "Submit deliverables"); } }
 function renderVerdict() {
-  const d = S.deal;
-  const dec = d && d.decision;
-  els.verdictWrap.hidden = !dec;
-  if (!dec) { els.judgeStatus.textContent = d ? "No evaluation yet." : "Create or load a deal first."; return; }
-  const verdict = dec.verdict, pct = Number(dec.releasePercent) || 0;
-  els.verdictBar.className = "verdict-bar " + (verdict === "release" ? "release" : verdict === "partial" ? "partial" : "refund");
-  els.verdictWord.textContent = verdict === "release" ? "Release" : verdict === "partial" ? "Partial release" : "Refund";
-  els.verdictPct.textContent = pct + "% to seller";
-  els.verdictMeter.style.width = Math.max(0, Math.min(100, pct)) + "%";
-  const list = Array.isArray(dec.criteria) ? dec.criteria : [];
-  const metN = list.filter((c) => c && c.met).length;
-  els.coverage.textContent = "Evidence: " + metN + " of " + list.length + " deliverables met.";
-  const agreed = Number(d.price) || 0;
-  // Prefer the real captured amount returned by the backend when present.
-  let released = agreed * pct / 100;
-  if (d.payment && d.payment.amount && isFinite(Number(d.payment.amount.value))) released = Number(d.payment.amount.value);
-  els.mAgreed.textContent = money(agreed, d.currency);
-  els.mReleased.textContent = money(released, d.payment && d.payment.amount ? d.payment.amount.currency_code : d.currency);
-  els.mReturned.textContent = money(agreed - released, d.currency);
-  const cap = d.payment && (d.payment.captureId || d.payment.id);
-  if (cap) { els.txRef.hidden = false; els.txId.textContent = String(cap); }
-  else { els.txRef.hidden = true; els.txId.textContent = ""; }
-  els.arbSummary.textContent = dec.summary || "";
-  els.criteriaList.innerHTML = "";
-  list.forEach((c) => {
-    const li = el("li", c.met ? "met" : "unmet");
-    li.appendChild(el("span", "mark", c.met ? "✓" : "✕"));
-    const body = el("div", "");
-    const head = el("div", "");
-    head.appendChild(el("span", "cn", String((c && c.deliverable) || "Deliverable")));
-    head.appendChild(el("span", "cs", c && c.met ? "MET" : "NOT MET"));
-    body.appendChild(head);
-    if (c && c.note) body.appendChild(el("p", "cn-note", String(c.note)));
-    li.appendChild(body);
-    els.criteriaList.appendChild(li);
-  });
+  const d = S.deal; const dec = d && d.decision; els.verdictWrap.hidden = !dec; if (!dec) { els.judgeStatus.textContent = d ? "No evaluation yet." : "Create or load a deal first."; return; }
+  const verdict = dec.verdict, pct = Number(dec.releasePercent) || 0; els.verdictBar.className = "verdict " + (verdict === "release" ? "release" : verdict === "partial" ? "partial" : "refund");
+  els.verdictWord.textContent = verdict === "release" ? "Release" : verdict === "partial" ? "Partial release" : "Refund"; els.verdictPct.textContent = pct + "% to seller"; els.verdictMeter.style.width = Math.max(0, Math.min(100, pct)) + "%";
+  const list = Array.isArray(dec.criteria) ? dec.criteria : []; const metN = list.filter((c) => c && c.met).length; els.coverage.textContent = "Evidence: " + metN + " of " + list.length + " deliverables met.";
+  const agreed = Number(d.price) || 0; let released = agreed * pct / 100; if (d.payment && d.payment.amount && isFinite(Number(d.payment.amount.value))) released = Number(d.payment.amount.value);
+  els.mAgreed.textContent = money(agreed, d.currency); els.mReleased.textContent = money(released, d.payment && d.payment.amount ? d.payment.amount.currency_code : d.currency); els.mReturned.textContent = money(agreed - released, d.currency);
+  const cap = d.payment && (d.payment.captureId || d.payment.id); if (cap) { els.txRef.hidden = false; els.txId.textContent = String(cap); } else { els.txRef.hidden = true; els.txId.textContent = ""; }
+  els.arbSummary.textContent = dec.summary || ""; els.criteriaList.innerHTML = "";
+  list.forEach((c) => { const li = el("li", c.met ? "met" : "unmet"); li.appendChild(el("span", "mark", c.met ? "✓" : "✕")); const body = el("div", ""); const head = el("div", ""); head.appendChild(el("span", "cn", String((c && c.deliverable) || "Deliverable"))); head.appendChild(el("span", "cs", c && c.met ? "MET" : "NOT MET")); body.appendChild(head); if (c && c.note) body.appendChild(el("p", "cn-note", String(c.note))); li.appendChild(body); els.criteriaList.appendChild(li); });
   els.judgeStatus.textContent = "Evaluated against " + list.length + " deliverable(s).";
 }
-async function runArbitration() {
-  if (!S.dealId) { showErr(els.judgeError, "Create or load a deal first."); return; }
-  if (S.busy.judge) return;
-  hideErr(els.judgeError);
-  S.busy.judge = true;
-  setBusy(els.btnJudge, els.btnJudgeLabel, true, "Evaluating…");
-  els.judgeStatus.textContent = "Arbiter is checking the submission against each deliverable…";
-  try {
-    S.deal = scrubDeal(await api.judge(S.dealId));
-    renderAll();
-    els.judgeStatus.textContent = "Evaluation complete.";
-  } catch (err) {
-    showErr(els.judgeError, err.message);
-    els.judgeStatus.textContent = "Evaluation failed. Funds are not shown as moved.";
-  } finally { S.busy.judge = false; setBusy(els.btnJudge, els.btnJudgeLabel, false, "Evaluate deliverables with AI"); }
-}
-/* ================= audit ================= */
-function renderAuditTimeline(audit) {
-  els.auditTimeline.innerHTML = "";
-  const add = (time, text, hot) => {
-    const li = el("li", hot ? "hot" : "");
-    li.appendChild(el("div", "tt", time));
-    li.appendChild(el("div", "", text));
-    els.auditTimeline.appendChild(li);
-  };
-  add("deal", "Deal “" + (audit.title || "—") + "” · status: " + (audit.status || "—"), true);
-  const turns = Array.isArray(audit.turns) ? audit.turns : [];
-  add("negotiation", turns.length + " recorded turn(s).", turns.length > 0);
-  if (audit.price !== null && audit.price !== undefined) add("agreement", "Agreed price: " + money(audit.price, audit.currency), true);
-  if (audit.submission) add("delivery", "Submission recorded (" + String(audit.submission).length + " chars).", true);
-  if (audit.decision) add("arbitration", "Verdict: " + audit.decision.verdict + " · " + (audit.decision.releasePercent || 0) + "% to seller.", true);
-  if (audit.payment) {
-    const p = audit.payment;
-    add("settlement", "Payment status: " + (p.status || "—") + (p.captureId ? " · ref " + p.captureId : ""), true);
-  }
-  if (audit.paymentError) add("notice", "Payment note: " + audit.paymentError, false);
-}
-async function loadAudit() {
-  hideErr(els.auditError);
-  if (!S.dealId) { showErr(els.auditError, "Create or load a deal first."); return; }
-  els.btnAudit.disabled = true;
-  try {
-    const clean = safeAudit(await api.audit(S.dealId));
-    renderAuditTimeline(clean);
-    els.auditRaw.textContent = JSON.stringify(clean, null, 2);
-  } catch (err) { showErr(els.auditError, err.message); }
-  finally { els.btnAudit.disabled = false; }
-}
-/* ================= action gating (backend state is the only driver) ================= */
-function syncActionStates() {
-  const st = S.deal && S.deal.status;
-  els.btnDeliver.disabled = S.busy.deliver || !S.dealId || st !== "funded";
-  els.btnJudge.disabled = S.busy.judge || !S.dealId || st !== "delivered";
-  els.btnCopyId.disabled = !S.dealId;
-  const ro = els.btnRefreshDeal, rf = els.btnRefreshFund;
-  if (ro) ro.disabled = S.busy.refresh || !S.dealId;
-  if (rf) rf.disabled = S.busy.refresh || !S.dealId;
-}
-/* ================= render all ================= */
-function renderAll() {
-  renderTracker();
-  renderConversation();
-  renderFunding();
-  renderExpected();
-  renderVerdict();
-  syncActionStates();
-}
-/* ================= wire up ================= */
-els.createForm.addEventListener("submit", createDeal);
-els.loadForm.addEventListener("submit", loadDealById);
-els.deliverForm.addEventListener("submit", submitDelivery);
-els.btnJudge.addEventListener("click", runArbitration);
-els.btnAudit.addEventListener("click", loadAudit);
-els.btnRefreshDeal.addEventListener("click", async () => {
-  if (S.busy.refresh || !S.dealId) return;
-  hideErr(els.auditError);
-  S.busy.refresh = true; syncActionStates();
-  try { await refreshDeal(); showToast("Deal refreshed."); }
-  catch (err) { showErr(els.auditError, err.message); }
-  finally { S.busy.refresh = false; syncActionStates(); }
-});
-els.btnRefreshFund.addEventListener("click", async () => {
-  if (S.busy.refresh || !S.dealId) return;
-  S.busy.refresh = true; syncActionStates();
-  try { await refreshDeal(); showToast("Deal refreshed."); }
-  catch (err) { showErr(els.fundError, err.message); }
-  finally { S.busy.refresh = false; syncActionStates(); }
-});
-els.btnCopyId.addEventListener("click", async () => {
-  if (!S.dealId) return;
-  try { await navigator.clipboard.writeText(S.dealId); showToast("Deal ID copied."); }
-  catch { showToast("Copy failed. Deal ID: " + S.dealId, true); }
-});
-els.fSubmission.addEventListener("input", () => {
-  els.subCount.textContent = String(els.fSubmission.value.length);
-});
-checkHealth();
-setInterval(checkHealth, 30000);
-(function init() {
-  renderTracker(); convoPlaceholder(); renderFunding(); renderExpected(); renderVerdict(); syncActionStates();
-  try {
-    const id = new URLSearchParams(location.search).get("deal");
-    if (id) { els.fDealId.value = id; selectDeal(id, false).catch(() => {}); }
-  } catch {}
-})();
+async function runArbitration() { if (!S.dealId) { showErr(els.judgeError, "Create or load a deal first."); return; } if (S.busy.judge) return; hideErr(els.judgeError); S.busy.judge = true; setBusy(els.btnJudge, els.btnJudgeLabel, true, "Evaluating…"); els.judgeStatus.textContent = "Arbiter is checking the submission against each deliverable…"; try { S.deal = scrub(await api.judge(S.dealId)); renderAll(); els.judgeStatus.textContent = "Evaluation complete."; } catch (err) { showErr(els.judgeError, err.message); els.judgeStatus.textContent = "Evaluation failed. Funds are not shown as moved."; } finally { S.busy.judge = false; setBusy(els.btnJudge, els.btnJudgeLabel, false, "Evaluate deliverables with AI"); } }
+function renderAuditTimeline(audit) { els.auditTimeline.innerHTML = ""; const add = (time, text, hot) => { const li = el("li", hot ? "hot" : ""); li.appendChild(el("div", "tt", time)); li.appendChild(el("div", "", text)); els.auditTimeline.appendChild(li); }; add("deal", "Deal “" + (audit.title || "—") + "” · status: " + (audit.status || "—"), true); const turns = Array.isArray(audit.turns) ? audit.turns : []; add("negotiation", turns.length + " recorded turn(s).", turns.length > 0); if (audit.price !== null && audit.price !== undefined) add("agreement", "Agreed price: " + money(audit.price, audit.currency), true); if (audit.submission) add("delivery", "Submission recorded (" + String(audit.submission).length + " chars).", true); if (audit.decision) add("arbitration", "Verdict: " + audit.decision.verdict + " · " + (audit.decision.releasePercent || 0) + "% to seller.", true); if (audit.payment) { const p = audit.payment; add("settlement", "Payment status: " + (p.status || "—") + (p.captureId ? " · ref " + p.captureId : ""), true); } if (audit.paymentError) add("notice", "Payment note: " + audit.paymentError, false); }
+async function loadAudit() { hideErr(els.auditError); if (!S.dealId) { showErr(els.auditError, "Create or load a deal first."); return; } els.btnAudit.disabled = true; try { const clean = safeAudit(await api.audit(S.dealId)); renderAuditTimeline(clean); els.auditRaw.textContent = JSON.stringify(clean, null, 2); } catch (err) { showErr(els.auditError, err.message); } finally { els.btnAudit.disabled = false; } }
+function syncActions() { const st = S.deal && S.deal.status; els.btnDeliver.disabled = S.busy.deliver || !S.dealId || st !== "funded"; els.btnJudge.disabled = S.busy.judge || !S.dealId || st !== "delivered"; els.btnCopyId.disabled = !S.dealId; }
+function renderAll() { renderTracker(); renderConversation(); renderFunding(); renderExpected(); renderVerdict(); syncActions(); }
+els.createForm.addEventListener("submit", createDeal); els.loadForm.addEventListener("submit", loadDealById); els.deliverForm.addEventListener("submit", submitDelivery); els.btnJudge.addEventListener("click", runArbitration); els.btnAudit.addEventListener("click", loadAudit);
+els.btnRefreshDeal.addEventListener("click", async () => { if (S.busy.refresh || !S.dealId) return; hideErr(els.auditError); S.busy.refresh = true; syncActions(); try { await refreshDeal(); showToast("Deal refreshed."); } catch (err) { showErr(els.auditError, err.message); } finally { S.busy.refresh = false; syncActions(); } });
+els.btnRefreshFund.addEventListener("click", async () => { if (S.busy.refresh || !S.dealId) return; S.busy.refresh = true; syncActions(); try { await refreshDeal(); showToast("Deal refreshed."); } catch (err) { showErr(els.fundError, err.message); } finally { S.busy.refresh = false; syncActions(); } });
+els.btnCopyId.addEventListener("click", async () => { if (!S.dealId) return; try { await navigator.clipboard.writeText(S.dealId); showToast("Deal ID copied."); } catch { showToast("Copy failed. Deal ID: " + S.dealId, true); } });
+els.fSubmission.addEventListener("input", () => { els.subCount.textContent = String(els.fSubmission.value.length); });
+checkHealth(); setInterval(checkHealth, 30000);
+// scroll reveal
+const io = new IntersectionObserver((entries) => { entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .12 });
+document.querySelectorAll(".reveal").forEach((n) => io.observe(n));
+(function init() { renderTracker(); convoPlaceholder(); renderFunding(); renderExpected(); renderVerdict(); syncActions(); try { const id = new URLSearchParams(location.search).get("deal"); if (id) { els.fDealId.value = id; selectDeal(id, false).catch(() => {}); } } catch {} })();
 </script>
 </body>
 </html>
