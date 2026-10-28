@@ -79,9 +79,11 @@ curl -s -X POST localhost:3000/api/deals/<id>/judge
 
 ## For judges: testing
 
-- Hosted demo: _TODO: add Render URL_
-- Sandbox buyer account for the PayPal approval step: _TODO: add test email and password_
+- Code: https://github.com/zopik-dev/dealroom (public, MIT license)
+- Hosted demo: deploy from the included `render.yaml` (free web service) — URL will be added after first deploy
+- Sandbox buyer account for the PayPal approval step: use any Personal sandbox account created in your PayPal developer dashboard (Testing Tools → Sandbox Accounts). The flow works with the default generated Personal account.
 - Everything runs against the PayPal sandbox, so no real money is involved.
+- Run locally: `npm install`, copy `.env.example` to `.env`, fill in the keys, `npm start`, open http://localhost:3000. Tests: `npm test` (6/6).
 
 ## Status
 
