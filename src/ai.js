@@ -5,7 +5,7 @@ import "dotenv/config";
 
 const BASE = (process.env.AI_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/+$/, "");
 const KEY = process.env.AI_API_KEY || process.env.ANTHROPIC_API_KEY || "";
-export const MODEL = process.env.AI_MODEL || "llama-3.3-70b-versatile";
+export const MODEL = process.env.AI_MODEL || "openai/gpt-oss-120b";
 
 async function chatText({ system, user, maxTokens, timeoutMs }) {
   const ctrl = new AbortController();
