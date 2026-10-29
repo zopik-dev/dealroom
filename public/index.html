@@ -6,340 +6,290 @@
 <title>DEALROOM — Deals negotiated by AI. Money released by evidence.</title>
 <style>
 :root{
-  --ground:#060a1a;
-  --ground-2:#0b1128;
-  --surface:#0f1633;
-  --surface-2:#151d42;
-  --line:rgba(120,145,200,.14);
-  --line-strong:rgba(120,145,200,.28);
-  --ink:#f0f3fa;
-  --ink-2:#c4cee6;
-  --muted:#7a8bb3;
-  --muted-2:#5a6a8f;
-  --green:#3dff9e;
-  --green-dim:rgba(61,255,158,.10);
-  --green-glow:rgba(61,255,158,.25);
-  --amber:#ffcf5c;
-  --amber-dim:rgba(255,207,92,.10);
+  --ground:#1a1aff;
+  --ground-2:#0f12cc;
+  --surface:rgba(255,255,255,.08);
+  --surface-2:rgba(255,255,255,.14);
+  --line:rgba(255,255,255,.22);
+  --line-strong:rgba(255,255,255,.45);
+  --ink:#ffffff;
+  --ink-2:rgba(255,255,255,.78);
+  --muted:rgba(255,255,255,.55);
+  --muted-2:rgba(255,255,255,.35);
+  --accent:#ff5c3a;
+  --accent-dim:rgba(255,92,58,.18);
+  --green:#c8ff4d;
+  --green-dim:rgba(200,255,77,.15);
+  --amber:#ffd23d;
+  --amber-dim:rgba(255,210,61,.15);
   --red:#ff8a8a;
-  --red-dim:rgba(255,138,138,.08);
-  --blue:#7fd6ff;
-  --r:2px;
+  --red-dim:rgba(255,138,138,.12);
+  --r:0px;
   --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
   --ease:cubic-bezier(.16,1,.3,1);
-  --ease-in:cubic-bezier(.76,0,.24,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--ground);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-::selection{background:var(--green);color:#06281a}
+body{background:var(--ground);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+::selection{background:var(--accent);color:#fff}
 a{color:inherit;text-decoration:none}
-:focus-visible{outline:1.5px solid var(--green);outline-offset:3px}
-.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px}
 @media(max-width:640px){.wrap{padding:0 20px}}
-/* ---------- corner frame nav ---------- */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:50;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-.topbar > *{pointer-events:auto}
-.wordmark{font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
-.wordmark .mark{width:22px;height:22px;border:1px solid var(--green);display:grid;place-items:center;font-size:11px;color:var(--green);font-weight:800}
-.health{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px;font-family:var(--mono);letter-spacing:.04em}
-.health .dot{width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
-.health.ok .dot{background:var(--green)}
-.health.ok{color:var(--ink-2)}
-.nav-links{display:flex;gap:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.nav-links a{position:relative;padding:4px 0}
-.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--green);transition:width .3s var(--ease)}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a:hover::after{width:100%}
-@media(max-width:760px){.nav-links{display:none}}
-.corner{position:fixed;bottom:18px;left:28px;z-index:50;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;pointer-events:none}
-.corner.r{left:auto;right:28px;text-align:right}
-@media(max-width:640px){.topbar{padding:14px 20px}.corner{left:20px;bottom:14px}.corner.r{right:20px}}
+/* ---------- topbar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px);background:rgba(26,26,255,.6);border-bottom:1px solid var(--line)}
+.topbar .wordmark{font-weight:900;font-size:15px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.topbar .mark{width:24px;height:24px;border:2px solid var(--ink);display:grid;place-items:center;font-size:12px;font-weight:900}
+.topbar .nav{display:flex;gap:28px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.topbar .nav a{position:relative;padding:4px 0;transition:opacity .2s}
+.topbar .nav a:hover{opacity:.6}
+.topbar .health{font-size:11px;font-family:var(--mono);display:flex;align-items:center;gap:8px;opacity:.8}
+.topbar .health .dot{width:7px;height:7px;border-radius:50%;background:var(--muted-2)}
+.topbar .health.ok .dot{background:var(--green)}
+@media(max-width:760px){.topbar .nav{display:none}}
 /* ---------- hero ---------- */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 0 80px;position:relative;overflow:hidden}
-.hero-grid{position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:radial-gradient(900px 600px at 50% 40%,#000 20%,transparent 70%);
-  -webkit-mask-image:radial-gradient(900px 600px at 50% 40%,#000 20%,transparent 70%)}
-.hero-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:28px;display:flex;align-items:center;gap:12px}
-.hero-label::before{content:"";width:40px;height:1px;background:var(--green)}
-.hero h1{font-size:clamp(52px,9vw,128px);font-weight:800;line-height:.92;letter-spacing:-.04em;max-width:1100px}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 0 60px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,255,255,.12),transparent 60%)}
+.hero-kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.7;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.hero-kicker::before{content:"";width:48px;height:2px;background:var(--ink)}
+.hero h1{font-size:clamp(64px,12vw,180px);font-weight:900;line-height:.88;letter-spacing:-.05em;max-width:1200px}
+.hero h1 .accent{color:var(--accent)}
 .hero h1 .line{display:block;overflow:hidden}
 .hero h1 .line span{display:block;transform:translateY(110%);animation:reveal .9s var(--ease) forwards}
-.hero h1 .line:nth-child(2) span{animation-delay:.08s}
-.hero h1 .line:nth-child(3) span{animation-delay:.16s}
-.hero h1 .accent{color:var(--green)}
+.hero h1 .line:nth-child(2) span{animation-delay:.06s}
+.hero h1 .line:nth-child(3) span{animation-delay:.12s}
+.hero h1 .line:nth-child(4) span{animation-delay:.18s}
 @keyframes reveal{to{transform:translateY(0)}}
-.hero-sub{margin-top:32px;max-width:520px;font-size:17px;color:var(--ink-2);line-height:1.6}
-.hero-amount{margin-top:64px;display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:end;border-top:1px solid var(--line);padding-top:32px}
-.hero-amount .label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.hero-amount .num{font-size:clamp(64px,10vw,140px);font-weight:800;letter-spacing:-.04em;line-height:.9;font-variant-numeric:tabular-nums;color:var(--amber)}
+.hero-sub{margin-top:32px;max-width:560px;font-size:19px;font-weight:500;opacity:.85;line-height:1.5}
+.hero-amount{margin-top:56px;display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:end;border-top:2px solid var(--ink);padding-top:32px}
+.hero-amount .label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;opacity:.6;margin-bottom:10px}
+.hero-amount .num{font-size:clamp(72px,11vw,160px);font-weight:900;letter-spacing:-.05em;line-height:.85;font-variant-numeric:tabular-nums;color:var(--amber)}
 .hero-amount .num.released{color:var(--green)}
-.hero-amount .side{font-size:13px;color:var(--muted);line-height:1.7;max-width:320px;padding-bottom:12px}
-.hero-amount .side b{color:var(--ink);font-weight:600}
-@media(max-width:760px){.hero-amount{grid-template-columns:1fr;gap:20px}.hero-amount .num{font-size:clamp(48px,14vw,80px)}}
-.hero-trust{margin-top:48px;display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
-.hero-trust span{display:flex;align-items:center;gap:8px}
-.hero-trust span::before{content:"";width:4px;height:4px;background:var(--green);border-radius:50%}
+.hero-amount .side{font-size:15px;opacity:.8;line-height:1.6;max-width:340px;padding-bottom:14px}
+.hero-amount .side b{font-weight:700;opacity:1}
+@media(max-width:760px){.hero-amount{grid-template-columns:1fr;gap:24px}.hero-amount .num{font-size:clamp(56px,16vw,96px)}}
+.hero-trust{margin-top:48px;display:flex;gap:16px;flex-wrap:wrap;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.hero-trust span{border:2px solid var(--ink);padding:8px 16px;border-radius:999px}
 /* ---------- sections ---------- */
-section{padding:120px 0;position:relative}
-section .section-head{display:grid;grid-template-columns:120px 1fr;gap:24px;margin-bottom:48px;align-items:baseline}
-.section-num{font-family:var(--mono);font-size:12px;color:var(--green);letter-spacing:.08em}
-.section-title{font-size:clamp(32px,4.5vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
-.section-sub{color:var(--muted);font-size:15px;max-width:560px;margin-top:12px}
-@media(max-width:760px){section{padding:80px 0}section .section-head{grid-template-columns:1fr;gap:8px}}
+section{padding:100px 0;position:relative}
+section .section-head{margin-bottom:48px}
+.section-num{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.5;margin-bottom:12px;font-family:var(--mono)}
+.section-title{font-size:clamp(40px,6vw,80px);font-weight:900;letter-spacing:-.04em;line-height:.95}
+.section-sub{opacity:.75;font-size:17px;max-width:580px;margin-top:16px;line-height:1.5}
 /* ---------- B. create ---------- */
 .create-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
 @media(max-width:900px){.create-grid{grid-template-columns:1fr;gap:40px}}
-.field{margin-bottom:24px}
-.flabel{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
-.flabel .req{color:var(--green)}
-input,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line-strong);color:var(--ink);font:inherit;font-size:16px;padding:10px 0;outline:none;transition:border-color .2s}
-input:focus,textarea:focus{border-color:var(--green)}
-textarea{min-height:96px;resize:vertical;line-height:1.6;border:1px solid var(--line-strong);padding:12px;border-radius:var(--r)}
-textarea:focus{border-color:var(--green)}
-.fhint{font-size:12px;color:var(--muted-2);margin-top:6px;font-family:var(--mono)}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.field{margin-bottom:28px}
+.flabel{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.7;margin-bottom:10px}
+.flabel .req{color:var(--accent)}
+input,textarea{width:100%;background:transparent;border:0;border-bottom:2px solid var(--line-strong);color:var(--ink);font:inherit;font-size:18px;padding:12px 0;outline:none;transition:border-color .2s}
+input:focus,textarea:focus{border-color:var(--ink)}
+textarea{min-height:100px;resize:vertical;line-height:1.6;border:2px solid var(--line-strong);padding:14px;border-radius:0}
+textarea:focus{border-color:var(--ink)}
+.fhint{font-size:12px;opacity:.5;margin-top:8px;font-family:var(--mono)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 @media(max-width:640px){.frow{grid-template-columns:1fr}}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:16px 28px;border:1px solid var(--green);background:var(--green);color:#06281a;cursor:pointer;transition:all .2s var(--ease);border-radius:var(--r)}
-.btn:hover{background:transparent;color:var(--green)}
-.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:18px 32px;border:2px solid var(--ink);background:var(--ink);color:var(--ground);cursor:pointer;transition:all .2s var(--ease);border-radius:0}
+.btn:hover{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
 .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
-.btn-ghost:hover{border-color:var(--green);color:var(--green)}
+.btn-ghost:hover{border-color:var(--ink)}
 .btn-gold{background:var(--amber);border-color:var(--amber);color:#2b1d00}
 .btn-gold:hover{background:transparent;color:var(--amber)}
-.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.form-error{display:none;margin-top:16px;font-size:13px;color:var(--red);border:1px solid rgba(255,138,138,.3);padding:12px 16px;border-radius:var(--r)}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.form-error{display:none;margin-top:16px;font-size:14px;color:var(--red);border:2px solid var(--red);padding:14px 18px;border-radius:0;background:var(--red-dim)}
 .form-error.show{display:block}
-.form-ok{display:none;margin-top:16px;font-size:13px;color:var(--green);border:1px solid rgba(61,255,158,.3);padding:12px 16px;border-radius:var(--r)}
+.form-ok{display:none;margin-top:16px;font-size:14px;color:var(--green);border:2px solid var(--green);padding:14px 18px;border-radius:0;background:var(--green-dim)}
 .form-ok.show{display:block}
-.spinner{width:14px;height:14px;border:1.5px solid rgba(6,40,26,.3);border-top-color:#06281a;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner{width:16px;height:16px;border:2px solid rgba(26,26,255,.3);border-top-color:var(--ground);border-radius:50%;animation:spin .7s linear infinite;display:none}
 .btn.loading .spinner{display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.load-form{margin-top:40px;padding-top:32px;border-top:1px solid var(--line)}
+.load-form{margin-top:48px;padding-top:36px;border-top:2px solid var(--line)}
 /* ---------- C. negotiation ---------- */
-.convo{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:32px}
+.convo{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink);margin-top:40px;overflow:hidden}
 @media(max-width:760px){.convo{grid-template-columns:1fr}}
-.col-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.col-head .who{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-.col-buyer .who{color:var(--blue)}
-.col-seller .who{color:var(--amber)}
-.col-buyer{border-right:1px solid var(--line)}
-@media(max-width:760px){.col-buyer{border-right:0;border-bottom:1px solid var(--line)}}
-.col-body{padding:20px;min-height:200px;display:flex;flex-direction:column;gap:14px}
-.bubble{border:1px solid var(--line);padding:14px 16px;border-radius:var(--r);background:var(--surface);max-width:100%;opacity:0;transform:translateY(8px);animation:bubbleIn .4s var(--ease) forwards}
+.col-head{padding:16px 24px;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.col-head .who{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.col-buyer .who{color:var(--ink)}
+.col-seller .who{color:var(--accent)}
+.col-buyer{border-right:2px solid var(--ink)}
+@media(max-width:760px){.col-buyer{border-right:0;border-bottom:2px solid var(--ink)}}
+.col-body{padding:24px;min-height:220px;display:flex;flex-direction:column;gap:16px;background:var(--ground-2)}
+.bubble{border:2px solid var(--line);padding:16px 20px;max-width:100%;opacity:0;transform:translateY(12px);animation:bubbleIn .4s var(--ease) forwards;background:var(--surface)}
 @keyframes bubbleIn{to{opacity:1;transform:translateY(0)}}
-.bubble .text{font-size:14px;line-height:1.6}
-.bubble .meta{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:11px;color:var(--muted);font-family:var(--mono);flex-wrap:wrap}
-.bubble .price{color:var(--green);font-weight:700}
-.bubble.blocked .cap{font-size:10px;color:var(--amber);border:1px solid rgba(255,207,92,.4);padding:2px 8px;border-radius:var(--r)}
-.bubble.buyer{border-left:2px solid var(--blue)}
-.bubble.seller{border-left:2px solid var(--amber)}
-.convo-empty{padding:32px 20px;color:var(--muted-2);font-size:13px;text-align:center}
-.sse-state{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--mono)}
-.sse-dot{width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
+.bubble .text{font-size:15px;line-height:1.6}
+.bubble .meta{display:flex;gap:12px;align-items:center;margin-top:12px;font-size:11px;opacity:.6;font-family:var(--mono);flex-wrap:wrap;font-weight:600}
+.bubble .price{color:var(--green);font-weight:800}
+.bubble.blocked .cap{font-size:10px;color:var(--amber);border:2px solid var(--amber);padding:3px 10px}
+.bubble.buyer{border-left:4px solid var(--ink)}
+.bubble.seller{border-left:4px solid var(--accent)}
+.convo-empty{padding:40px 24px;opacity:.4;font-size:14px;text-align:center;font-style:italic}
+.sse-state{display:flex;align-items:center;gap:12px;margin-top:20px;font-size:13px;opacity:.7;font-family:var(--mono);font-weight:600}
+.sse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}
 .sse-dot.live{background:var(--green);animation:blink 1.2s ease infinite}
 .sse-dot.done{background:var(--green)}
 .sse-dot.err{background:var(--red)}
 @keyframes blink{50%{opacity:.3}}
 /* ---------- D. tracker ---------- */
-.tracker{margin-top:32px;border:1px solid var(--line);padding:32px 28px;overflow-x:auto}
-.tracker:focus-visible{outline:1.5px solid var(--green);outline-offset:2px}
-.track{display:flex;align-items:flex-start;min-width:620px;position:relative}
-.tstep{flex:1;position:relative;text-align:center;padding-top:28px}
-.tstep::before{content:"";position:absolute;top:9px;left:-50%;width:100%;height:1px;background:var(--line)}
+.tracker{margin-top:40px;border:2px solid var(--ink);padding:40px 32px;overflow-x:auto}
+.tracker:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.track{display:flex;align-items:flex-start;min-width:640px;position:relative}
+.tstep{flex:1;position:relative;text-align:center;padding-top:32px}
+.tstep::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:var(--line)}
 .tstep:first-child::before{display:none}
-.tstep .pip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:18px;height:18px;border:1px solid var(--muted-2);background:var(--ground);z-index:1;transition:all .3s var(--ease)}
+.tstep .pip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:22px;height:22px;border:2px solid var(--muted-2);background:var(--ground);z-index:1;transition:all .3s var(--ease)}
 .tstep.done::before{background:var(--green)}
 .tstep.done .pip{border-color:var(--green);background:var(--green)}
-.tstep.done .pip::after{content:"";display:block;width:6px;height:6px;margin:5px auto 0;background:#06281a;border-radius:50%}
-.tstep.active .pip{border-color:var(--green);box-shadow:0 0 0 4px var(--green-dim)}
-.tstep.amber.active .pip{border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-dim)}
-.tstep.failed .pip{border-color:var(--red)}
-.tstep .t{font-size:12px;font-weight:700;letter-spacing:.04em}
-.tstep .s{font-size:10px;color:var(--muted-2);font-family:var(--mono);margin-top:2px}
+.tstep.done .pip::after{content:"";display:block;width:8px;height:8px;margin:5px auto 0;background:var(--ground)}
+.tstep.active .pip{border-color:var(--ink);box-shadow:0 0 0 6px var(--accent-dim);background:var(--ink)}
+.tstep.amber.active .pip{border-color:var(--amber);box-shadow:0 0 0 6px var(--amber-dim);background:var(--amber)}
+.tstep.failed .pip{border-color:var(--red);background:var(--red)}
+.tstep .t{font-size:13px;font-weight:800;letter-spacing:.02em}
+.tstep .s{font-size:10px;opacity:.5;font-family:var(--mono);margin-top:3px}
 .tstep.done .t{color:var(--green)}
 .tstep.active .t{color:var(--ink)}
-.tstep.rest .t{color:var(--muted)}
-@media(max-width:760px){.track{flex-direction:column;min-width:0}.tstep{text-align:left;padding:0 0 20px 32px}.tstep::before{top:0;left:8px;width:1px;height:100%}.tstep .pip{left:0;transform:none}}
-.tracker-note{margin-top:20px;font-size:13px;color:var(--muted);font-family:var(--mono)}
-.tracker-actions{display:flex;gap:10px;margin-top:16px}
-.btn-sm{font-size:11px;padding:10px 18px;letter-spacing:.08em}
+.tstep.rest .t{opacity:.4}
+@media(max-width:760px){.track{flex-direction:column;min-width:0}.tstep{text-align:left;padding:0 0 24px 36px}.tstep::before{top:0;left:10px;width:2px;height:100%}.tstep .pip{left:0;transform:none}}
+.tracker-note{margin-top:24px;font-size:14px;opacity:.7;font-family:var(--mono);font-weight:600}
+.tracker-actions{display:flex;gap:10px;margin-top:20px}
+.btn-sm{font-size:11px;padding:12px 20px;letter-spacing:.1em}
 /* ---------- E. funding ---------- */
-.fund{margin-top:32px;border:1px solid var(--line);padding:40px 36px;position:relative;overflow:hidden}
-.fund.await{border-color:rgba(255,207,92,.4)}
-.fund.held{border-color:rgba(61,255,158,.4)}
-.fund-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0}
-.fund-amount{font-size:clamp(56px,9vw,104px);font-weight:800;letter-spacing:-.04em;line-height:.9;margin:12px 0 4px;font-variant-numeric:tabular-nums}
+.fund{margin-top:40px;border:2px solid var(--ink);padding:48px 40px;position:relative;overflow:hidden}
+.fund.await{border-color:var(--amber);background:linear-gradient(180deg,var(--amber-dim),transparent)}
+.fund.held{border-color:var(--green);background:linear-gradient(180deg,var(--green-dim),transparent)}
+.fund-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.6;margin:0;font-family:var(--mono)}
+.fund-amount{font-size:clamp(64px,10vw,140px);font-weight:900;letter-spacing:-.05em;line-height:.85;margin:12px 0 4px;font-variant-numeric:tabular-nums}
 .fund.await .fund-amount{color:var(--amber)}
 .fund.held .fund-amount{color:var(--green)}
-.fund-sub{color:var(--muted);font-size:14px;margin:0 0 24px;max-width:520px}
-.held-line{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--green);font-weight:600;margin:0 0 8px}
-.held-line .tick{width:24px;height:24px;border:1px solid var(--green);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--green)}
-.approve-btn{display:inline-flex;align-items:center;gap:12px;font:inherit;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:18px 32px;background:var(--amber);color:#2b1d00;border:1px solid var(--amber);cursor:pointer;transition:all .2s var(--ease);border-radius:var(--r);text-decoration:none}
+.fund-sub{opacity:.75;font-size:15px;margin:0 0 28px;max-width:560px}
+.held-line{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--green);font-weight:700;margin:0 0 10px}
+.held-line .tick{width:28px;height:28px;border:2px solid var(--green);display:grid;place-items:center;font-size:14px;font-weight:900;color:var(--green)}
+.approve-btn{display:inline-flex;align-items:center;gap:12px;font:inherit;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:20px 36px;background:var(--amber);color:#2b1d00;border:2px solid var(--amber);cursor:pointer;transition:all .2s var(--ease);border-radius:0;text-decoration:none}
 .approve-btn:hover{background:transparent;color:var(--amber)}
 /* ---------- F/G ---------- */
-.criteria{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
-.criteria li{display:flex;gap:16px;align-items:flex-start;border:1px solid var(--line);padding:16px 18px;border-radius:var(--r);background:var(--surface)}
-.criteria .mark{flex:0 0 22px;width:22px;height:22px;border:1px solid var(--muted-2);display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.criteria{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.criteria li{display:flex;gap:18px;align-items:flex-start;border:2px solid var(--line);padding:18px 22px;border-radius:0;background:var(--surface)}
+.criteria .mark{flex:0 0 26px;width:26px;height:26px;border:2px solid var(--muted-2);display:grid;place-items:center;font-size:14px;font-weight:900;margin-top:1px}
 .criteria li.met .mark{border-color:var(--green);color:var(--green);background:var(--green-dim)}
 .criteria li.unmet .mark{border-color:var(--red);color:var(--red);background:var(--red-dim)}
-.criteria .cn{font-size:14px;font-weight:600}
-.criteria .cs{font-size:10px;letter-spacing:.12em;margin-left:10px;font-family:var(--mono)}
+.criteria .cn{font-size:15px;font-weight:700}
+.criteria .cs{font-size:10px;letter-spacing:.14em;margin-left:12px;font-family:var(--mono);font-weight:700}
 .criteria li.met .cs{color:var(--green)}
 .criteria li.unmet .cs{color:var(--red)}
-.criteria .cn-note{font-size:13px;color:var(--muted);margin:4px 0 0}
-.verdict{margin-top:24px;border:1px solid var(--line);padding:24px 28px;border-radius:var(--r);background:var(--surface)}
-.verdict.release{border-color:rgba(61,255,158,.4)}
-.verdict.partial{border-color:rgba(255,207,92,.4)}
-.verdict.refund{border-color:rgba(255,138,138,.4)}
-.verdict-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.verdict-word{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.criteria .cn-note{font-size:13px;opacity:.7;margin:4px 0 0}
+.verdict{margin-top:32px;border:2px solid var(--ink);padding:32px 36px;border-radius:0;background:var(--surface)}
+.verdict.release{border-color:var(--green)}
+.verdict.partial{border-color:var(--amber)}
+.verdict.refund{border-color:var(--red)}
+.verdict-top{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.verdict-word{font-size:36px;font-weight:900;letter-spacing:-.03em}
 .verdict.release .verdict-word{color:var(--green)}
 .verdict.partial .verdict-word{color:var(--amber)}
 .verdict.refund .verdict-word{color:var(--red)}
-.verdict-pct{font-family:var(--mono);font-size:13px;color:var(--muted);margin-left:auto}
-.meter{height:3px;background:var(--line);margin-top:16px;overflow:hidden}
+.verdict-pct{font-family:var(--mono);font-size:13px;opacity:.6;margin-left:auto;font-weight:700}
+.meter{height:4px;background:var(--line);margin-top:20px;overflow:hidden}
 .meter i{display:block;height:100%;transition:width 1s var(--ease)}
 .verdict.release .meter i{background:var(--green)}
 .verdict.partial .meter i{background:var(--amber)}
 .verdict.refund .meter i{background:var(--red)}
-.moneyline{display:flex;gap:40px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
-.moneyline > div{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-.moneyline b{display:block;font-size:22px;color:var(--ink);font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.txref{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:16px;overflow-wrap:anywhere}
-.txref b{color:var(--ink)}
-.summary{font-size:15px;margin:16px 0 0;color:var(--ink-2);line-height:1.6;max-width:640px}
-.coverage{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:8px}
-.judge-status{margin-top:16px;font-size:13px;color:var(--muted)}
+.moneyline{display:flex;gap:48px;flex-wrap:wrap;margin-top:24px;padding-top:24px;border-top:2px solid var(--line)}
+.moneyline > div{font-size:11px;opacity:.6;letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono);font-weight:700}
+.moneyline b{display:block;font-size:26px;font-weight:900;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.txref{font-family:var(--mono);font-size:11px;opacity:.5;margin-top:20px;overflow-wrap:anywhere;font-weight:600}
+.txref b{color:var(--ink);opacity:1}
+.summary{font-size:16px;margin:20px 0 0;opacity:.85;line-height:1.6;max-width:640px}
+.coverage{font-size:11px;opacity:.5;font-family:var(--mono);margin-top:10px;font-weight:600}
+.judge-status{margin-top:20px;font-size:14px;opacity:.7}
 /* ---------- H audit ---------- */
-.audit-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.timeline{list-style:none;margin:24px 0 0;padding:0;border-left:1px solid var(--line);display:flex;flex-direction:column}
-.timeline li{position:relative;padding:0 0 20px 24px;font-size:13px}
-.timeline li::before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--ground);border:1px solid var(--muted-2)}
+.audit-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.timeline{list-style:none;margin:28px 0 0;padding:0;border-left:2px solid var(--line);display:flex;flex-direction:column}
+.timeline li{position:relative;padding:0 0 24px 28px;font-size:14px}
+.timeline li::before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--ground);border:2px solid var(--muted-2)}
 .timeline li.hot::before{border-color:var(--green);background:var(--green)}
-.timeline .tt{color:var(--muted-2);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-details.raw{margin-top:20px;border:1px solid var(--line);border-radius:var(--r)}
-details.raw summary{cursor:pointer;padding:14px 18px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;list-style:none}
-details.raw summary:hover{color:var(--ink)}
-details.raw summary::before{content:"+ ";color:var(--green);font-family:var(--mono)}
+.timeline .tt{opacity:.4;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+details.raw{margin-top:24px;border:2px solid var(--line);border-radius:0}
+details.raw summary{cursor:pointer;padding:16px 20px;font-size:12px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;list-style:none;font-family:var(--mono);font-weight:700}
+details.raw summary:hover{opacity:1}
+details.raw summary::before{content:"+ ";color:var(--green)}
 details.raw[open] summary::before{content:"– "}
-.audit-pre{font-family:var(--mono);font-size:11px;color:var(--muted);padding:0 18px 18px;overflow:auto;max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
-footer.site{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted-2);font-size:12px}
-footer.site code{font-family:var(--mono);color:var(--muted)}
-.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--ground);font-size:13px;font-weight:600;padding:14px 22px;border-radius:var(--r);display:none;z-index:80;max-width:min(92vw,560px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.audit-pre{font-family:var(--mono);font-size:11px;opacity:.6;padding:0 20px 20px;overflow:auto;max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-weight:600}
+footer.site{border-top:2px solid var(--ink);padding:48px 0 60px;opacity:.5;font-size:13px}
+footer.site code{font-family:var(--mono);opacity:.8}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--ground);font-size:14px;font-weight:800;padding:16px 24px;border-radius:0;display:none;z-index:80;max-width:min(92vw,560px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .toast.show{display:block}
-.toast.error{background:var(--red);color:#2b0a0a}
+.toast.error{background:var(--red);color:#fff}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}html{scroll-behavior:auto}}
-/* reveal on scroll */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .reveal.in{opacity:1;transform:translateY(0)}
 .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
 </style>
 </head>
 <body>
-<!-- corner frame -->
 <header class="topbar">
   <a class="wordmark" href="#top" aria-label="DEALROOM home"><span class="mark" aria-hidden="true">D</span>DEALROOM</a>
-  <nav class="nav-links" aria-label="Sections">
+  <nav class="nav" aria-label="Sections">
     <a href="#create">Create</a><a href="#negotiation">Negotiate</a><a href="#funding">Fund</a><a href="#delivery">Deliver</a><a href="#arbiter">Settle</a><a href="#audit">Audit</a>
   </nav>
   <span class="health" id="healthBadge" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="healthText">Checking…</span></span>
 </header>
-<div class="corner">ESCROW · AI · PAYPAL</div>
-<div class="corner r" id="cornerStatus">IDLE</div>
 
 <main id="top">
-  <!-- A. HERO -->
-  <div class="hero">
-    <div class="hero-grid" aria-hidden="true"></div>
-    <div class="wrap">
-      <p class="hero-label reveal">AI escrow · PayPal sandbox · No real money</p>
-      <h1>
-        <span class="line"><span>DEALS NEGOTIATED</span></span>
-        <span class="line"><span>BY <span class="accent">AI.</span></span></span>
-        <span class="line"><span>MONEY RELEASED</span></span>
-        <span class="line"><span>BY <span class="accent">EVIDENCE.</span></span></span>
-      </h1>
-      <p class="hero-sub reveal d1">Two agents haggle within sealed limits. PayPal freezes the agreed sum. An impartial arbiter scores every deliverable before a single cent moves.</p>
-      <div class="hero-amount reveal d2">
-        <div>
-          <div class="label">Secured amount</div>
-          <div class="num" id="heroAmount" aria-live="polite">$—</div>
-        </div>
-        <div class="side">
-          <b id="heroState">No deal yet</b><br>
-          Buyer and seller limits are sealed in code. The browser never sees either. On agreement, the backend creates a PayPal <b>AUTHORIZE</b> order — a hold, not a charge.
-        </div>
+  <div class="wrap">
+  <section class="hero">
+    <div class="hero-kicker">AI escrow · PayPal sandbox · No real money</div>
+    <h1>
+      <span class="line"><span>DEALS</span></span>
+      <span class="line"><span>NEGOTIATED</span></span>
+      <span class="line"><span>BY <span class="accent">AI.</span></span></span>
+      <span class="line"><span>SETTLED BY</span></span>
+      <span class="line"><span><span class="accent">EVIDENCE.</span></span></span>
+    </h1>
+    <p class="hero-sub">Two agents haggle within sealed limits. PayPal freezes the agreed sum. An impartial arbiter scores every deliverable before a single cent moves.</p>
+    <div class="hero-amount">
+      <div>
+        <div class="label">Secured amount</div>
+        <div class="num" id="heroAmount" aria-live="polite">$—</div>
       </div>
-      <div class="hero-trust reveal d3">
-        <span>AI-to-AI negotiation</span><span>PayPal authorization hold</span><span>Deliverable-based settlement</span>
+      <div class="side">
+        <b id="heroState">No deal yet.</b><br>
+        Buyer and seller limits are sealed in code. The browser never sees either. On agreement, the backend creates a PayPal <b>AUTHORIZE</b> order — a hold, not a charge.
       </div>
     </div>
-  </div>
+    <div class="hero-trust">
+      <span>AI-to-AI negotiation</span><span>PayPal authorization hold</span><span>Deliverable-based settlement</span>
+    </div>
+  </section>
 
-  <div class="wrap">
   <!-- B. CREATE -->
   <section id="create">
-    <div class="section-head reveal">
-      <span class="section-num">01 / CREATE</span>
-      <div><h2 class="section-title">Start a deal.</h2><p class="section-sub">Set the two confidential limits. They are sent once, then erased from this form. Never shown again — not in chat, tracker, funding, verdict, audit, or errors.</p></div>
+    <div class="section-head" style="margin-bottom:48px">
+      <div class="section-num">01 / Create</div>
+      <div><h2 class="section-title">Start a deal.</h2><p class="section-sub">Set the two confidential limits. They are sent once, then erased from this form. Never shown again.</p></div>
     </div>
     <div class="create-grid">
       <div>
         <form id="createForm" novalidate>
-          <div class="field">
-            <label class="flabel" for="fTitle">Deal title <span class="req">*</span></label>
-            <input type="text" id="fTitle" maxlength="200" placeholder="Logo design for a coffee shop" autocomplete="off" required>
+          <div class="field"><label class="flabel" for="fTitle">Deal title <span class="req">*</span></label><input type="text" id="fTitle" maxlength="200" placeholder="Logo design for a coffee shop" autocomplete="off" required></div>
+          <div class="frow">
+            <div class="field"><label class="flabel" for="fBuyerMax">Buyer maximum, USD <span class="req">*</span></label><input type="number" id="fBuyerMax" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="100.00" required><p class="fhint">Private. Cleared after creation.</p></div>
+            <div class="field"><label class="flabel" for="fSellerMin">Seller minimum, USD <span class="req">*</span></label><input type="number" id="fSellerMin" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="60.00" required><p class="fhint">Private. Cleared after creation.</p></div>
           </div>
           <div class="frow">
-            <div class="field">
-              <label class="flabel" for="fBuyerMax">Buyer maximum, USD <span class="req">*</span></label>
-              <input type="number" id="fBuyerMax" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="100.00" required>
-              <p class="fhint">Private. Cleared after creation.</p>
-            </div>
-            <div class="field">
-              <label class="flabel" for="fSellerMin">Seller minimum, USD <span class="req">*</span></label>
-              <input type="number" id="fSellerMin" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="60.00" required>
-              <p class="fhint">Private. Cleared after creation.</p>
-            </div>
+            <div class="field"><label class="flabel" for="fCategory">Category</label><input type="text" id="fCategory" maxlength="60" placeholder="design" autocomplete="off"></div>
+            <div class="field"><label class="flabel" for="fCurrency">Currency</label><input type="text" id="fCurrency" maxlength="3" value="USD" autocomplete="off"></div>
           </div>
-          <div class="frow">
-            <div class="field">
-              <label class="flabel" for="fCategory">Category</label>
-              <input type="text" id="fCategory" maxlength="60" placeholder="design" autocomplete="off">
-            </div>
-            <div class="field">
-              <label class="flabel" for="fCurrency">Currency</label>
-              <input type="text" id="fCurrency" maxlength="3" value="USD" autocomplete="off">
-            </div>
-          </div>
-          <div class="field">
-            <label class="flabel" for="fDeliverables">Deliverables — one requirement per line <span class="req">*</span></label>
-            <textarea id="fDeliverables" placeholder="Logo in SVG&#10;Logo in PNG 1024px&#10;Two color variants" required></textarea>
-          </div>
-          <div class="btn-row">
-            <button type="submit" class="btn" id="btnCreate"><span class="spinner" aria-hidden="true"></span><span id="btnCreateLabel">Start AI Negotiation</span></button>
-          </div>
-          <div class="form-error" id="createError" role="alert"></div>
-          <div class="form-ok" id="createOk" role="status"></div>
+          <div class="field"><label class="flabel" for="fDeliverables">Deliverables — one requirement per line <span class="req">*</span></label><textarea id="fDeliverables" placeholder="Logo in SVG&#10;Logo in PNG 1024px&#10;Two color variants" required></textarea></div>
+          <div class="btn-row"><button type="submit" class="btn" id="btnCreate"><span class="spinner" aria-hidden="true"></span><span id="btnCreateLabel">Start AI Negotiation</span></button></div>
+          <div class="form-error" id="createError" role="alert"></div><div class="form-ok" id="createOk" role="status"></div>
         </form>
       </div>
       <div>
-        <div class="load-form">
-          <p class="flabel">Or continue an existing deal</p>
-          <form id="loadForm" style="margin-top:12px">
-            <input type="text" id="fDealId" placeholder="Paste deal UUID" autocomplete="off" spellcheck="false">
-            <div class="btn-row" style="margin-top:16px"><button type="submit" class="btn btn-ghost btn-sm" id="btnLoad">Load deal</button></div>
-            <div class="form-error" id="loadError" role="alert"></div>
-          </form>
-        </div>
-        <div style="margin-top:40px;padding:24px;border:1px solid var(--line);border-radius:var(--r)">
+        <div class="load-form"><p class="flabel" style="margin-bottom:12px">Or continue an existing deal</p><form id="loadForm"><input type="text" id="fDealId" placeholder="Paste deal UUID" autocomplete="off" spellcheck="false"><div class="btn-row" style="margin-top:16px"><button type="submit" class="btn btn-ghost btn-sm" id="btnLoad">Load deal</button></div><div class="form-error" id="loadError" role="alert"></div></form></div>
+        <div style="margin-top:40px;padding:24px;border:2px solid var(--line)">
           <p class="flabel" style="margin-bottom:12px">What happens next</p>
-          <p style="font-size:14px;color:var(--ink-2);line-height:1.7">1. Agents haggle live below.<br>2. On agreement, a PayPal <b>AUTHORIZE</b> order freezes the sum.<br>3. You approve in sandbox.<br>4. Seller submits work.<br>5. Arbiter scores each item. Money moves only then.</p>
+          <p style="font-size:14px;opacity:.8;line-height:1.7">1. Agents haggle live below.<br>2. On agreement, a PayPal <b>AUTHORIZE</b> order freezes the sum.<br>3. You approve in sandbox.<br>4. Seller submits work.<br>5. Arbiter scores each item. Money moves only then.</p>
         </div>
       </div>
     </div>
@@ -347,31 +297,19 @@ footer.site code{font-family:var(--mono);color:var(--muted)}
 
   <!-- C. NEGOTIATION -->
   <section id="negotiation">
-    <div class="section-head reveal">
-      <span class="section-num">02 / NEGOTIATE</span>
-      <div><h2 class="section-title">Watch them haggle.</h2><p class="section-sub">Two autonomous agents, one price. Amounts are public offers from the event stream. A dashed flag means code enforced a confidential limit — the limit itself is never revealed.</p></div>
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">02 / Negotiate</div><div><h2 class="section-title">Watch them haggle.</h2><p class="section-sub">Two autonomous agents, one price. Amounts are public offers from the event stream. A dashed flag means code enforced a confidential limit.</p></div></div>
+    <div class="convo">
+      <div class="col-buyer"><div class="col-head"><span class="who">Buyer agent</span><span style="font-size:10px;opacity:.4;font-family:var(--mono)" id="buyerCount"></span></div><div class="col-body" id="colBuyer" role="log" aria-live="polite" aria-label="Buyer messages"><div class="convo-empty">No messages yet.</div></div></div>
+      <div class="col-seller"><div class="col-head"><span class="who">Seller agent</span><span style="font-size:10px;opacity:.4;font-family:var(--mono)" id="sellerCount"></span></div><div class="col-body" id="colSeller" role="log" aria-live="polite" aria-label="Seller messages"><div class="convo-empty">No messages yet.</div></div></div>
     </div>
-    <div class="convo reveal d1">
-      <div class="col-buyer">
-        <div class="col-head"><span class="who">Buyer agent</span><span style="font-size:10px;color:var(--muted-2);font-family:var(--mono)" id="buyerCount"></span></div>
-        <div class="col-body" id="colBuyer" role="log" aria-live="polite" aria-label="Buyer messages"><div class="convo-empty">No messages yet.</div></div>
-      </div>
-      <div class="col-seller">
-        <div class="col-head"><span class="who">Seller agent</span><span style="font-size:10px;color:var(--muted-2);font-family:var(--mono)" id="sellerCount"></span></div>
-        <div class="col-body" id="colSeller" role="log" aria-live="polite" aria-label="Seller messages"><div class="convo-empty">No messages yet.</div></div>
-      </div>
-    </div>
-    <div class="sse-state reveal d2"><span class="sse-dot" id="sseDot"></span><span id="sseText">Stream idle.</span></div>
+    <div class="sse-state"><span class="sse-dot" id="sseDot"></span><span id="sseText">Stream idle.</span></div>
     <div class="form-error" id="sseError" role="alert"></div>
   </section>
 
   <!-- D. TRACKER -->
   <section id="tracker">
-    <div class="section-head reveal">
-      <span class="section-num">03 / TRACK</span>
-      <div><h2 class="section-title">Where is the money?</h2><p class="section-sub">Driven only by backend status. Authorization is a hold — not a payment.</p></div>
-    </div>
-    <div class="tracker reveal d1" tabindex="0" role="list" aria-label="Financial progress">
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">03 / Track</div><div><h2 class="section-title">Where is the money?</h2><p class="section-sub">Driven only by backend status. Authorization is a hold — not a payment.</p></div></div>
+    <div class="tracker" tabindex="0" role="list" aria-label="Financial progress">
       <div class="track" id="track">
         <div class="tstep" role="listitem" data-stage="1"><span class="pip" aria-hidden="true"></span><div class="t">Negotiating</div><div class="s">offers live</div></div>
         <div class="tstep" role="listitem" data-stage="2"><span class="pip" aria-hidden="true"></span><div class="t">Awaiting payment</div><div class="s">approve hold</div></div>
@@ -380,28 +318,23 @@ footer.site code{font-family:var(--mono);color:var(--muted)}
         <div class="tstep" role="listitem" data-stage="5"><span class="pip" aria-hidden="true"></span><div class="t" id="stage5label">Settled</div><div class="s" id="stage5sub">release · split · void</div></div>
       </div>
     </div>
-    <p class="tracker-note reveal d2" id="trackerNote">Create a deal to begin tracking.</p>
-    <div class="tracker-actions reveal d2">
-      <button type="button" class="btn btn-ghost btn-sm" id="btnCopyId" disabled>Copy deal ID</button>
-    </div>
+    <p class="tracker-note" id="trackerNote">Create a deal to begin tracking.</p>
+    <div class="tracker-actions"><button type="button" class="btn btn-ghost btn-sm" id="btnCopyId" disabled>Copy deal ID</button></div>
   </section>
 
   <!-- E. FUNDING -->
   <section id="funding">
-    <div class="section-head reveal">
-      <span class="section-num">04 / FUND</span>
-      <div><h2 class="section-title">Authorize the hold.</h2><p class="section-sub">The agreed amount is frozen in PayPal Sandbox. No payout yet. The seller gets nothing until the arbiter decides.</p></div>
-    </div>
-    <div id="fundEmpty" class="reveal"><p style="color:var(--muted);font-size:15px;max-width:560px">Nothing to approve yet. This panel activates when agents agree and the backend reports <b style="color:var(--ink)">awaiting_payment</b>.</p></div>
-    <div class="fund await reveal" id="fundAwait" hidden>
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">04 / Fund</div><div><h2 class="section-title">Authorize the hold.</h2><p class="section-sub">The agreed amount is frozen in PayPal Sandbox. No payout yet.</p></div></div>
+    <div id="fundEmpty"><p style="opacity:.7;font-size:15px;max-width:560px">Nothing to approve yet. This panel activates when agents agree and the backend reports <b>awaiting_payment</b>.</p></div>
+    <div class="fund await" id="fundAwait" hidden>
       <p class="fund-label">Agreed amount</p>
       <div class="fund-amount" id="fundAmount" aria-live="polite">$—</div>
       <p class="fund-sub">Awaiting buyer approval. The next step authorizes this amount in PayPal Sandbox — funds are held, not paid out.</p>
       <a class="approve-btn" id="btnApprove" href="#" hidden target="_blank" rel="noopener noreferrer">Approve in PayPal Sandbox →</a>
-      <p style="color:var(--muted);font-size:12px;margin-top:16px;font-family:var(--mono)">Opens the approval URL returned by the backend. Approve with a sandbox buyer account, then return and refresh.</p>
+      <p style="opacity:.5;font-size:12px;margin-top:16px;font-family:var(--mono)">Opens the approval URL returned by the backend. Approve with a sandbox buyer account, then return and refresh.</p>
       <div class="btn-row" style="margin-top:20px"><button type="button" class="btn btn-ghost btn-sm" id="btnRefreshFund">Refresh deal state</button></div>
     </div>
-    <div class="fund held reveal" id="fundHeld" hidden>
+    <div class="fund held" id="fundHeld" hidden>
       <p class="held-line"><span class="tick" aria-hidden="true">✓</span><span>Funds authorized · Held in escrow</span></p>
       <div class="fund-amount" id="heldAmount" aria-live="polite">$—</div>
       <p class="fund-sub" id="heldSub">The authorized amount is frozen. Next: the seller submits the work.</p>
@@ -411,49 +344,30 @@ footer.site code{font-family:var(--mono);color:var(--muted)}
 
   <!-- F. DELIVERY -->
   <section id="delivery">
-    <div class="section-head reveal">
-      <span class="section-num">05 / DELIVER</span>
-      <div><h2 class="section-title">Submit the work.</h2><p class="section-sub">The arbiter compares this text against each requested deliverable. Be specific — evidence is everything.</p></div>
-    </div>
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">05 / Deliver</div><div><h2 class="section-title">Submit the work.</h2><p class="section-sub">The arbiter compares this text against each requested deliverable. Be specific — evidence is everything.</p></div></div>
     <div style="max-width:720px">
       <p class="flabel" style="margin-bottom:12px">Requested deliverables</p>
       <ul class="criteria" id="expectedList" aria-label="Requested deliverables" style="margin-bottom:32px"></ul>
       <form id="deliverForm">
-        <div class="field">
-          <label class="flabel" for="fSubmission">Submission text, links and evidence <span class="req">*</span></label>
-          <textarea id="fSubmission" placeholder="Delivered logo.svg and logo.png (1024px). Two color variants: dark and light." maxlength="10000"></textarea>
-          <p class="fhint"><span id="subCount">0</span> / 10000 characters.</p>
-        </div>
-        <div class="btn-row">
-          <button type="submit" class="btn" id="btnDeliver" disabled><span class="spinner" aria-hidden="true"></span><span id="btnDeliverLabel">Submit deliverables</span></button>
-        </div>
-        <div class="form-error" id="deliverError" role="alert"></div>
-        <div class="form-ok" id="deliverOk" role="status"></div>
+        <div class="field"><label class="flabel" for="fSubmission">Submission text, links and evidence <span class="req">*</span></label><textarea id="fSubmission" placeholder="Delivered logo.svg and logo.png (1024px). Two color variants: dark and light." maxlength="10000"></textarea><p class="fhint"><span id="subCount">0</span> / 10000 characters.</p></div>
+        <div class="btn-row"><button type="submit" class="btn" id="btnDeliver" disabled><span class="spinner" aria-hidden="true"></span><span id="btnDeliverLabel">Submit deliverables</span></button></div>
+        <div class="form-error" id="deliverError" role="alert"></div><div class="form-ok" id="deliverOk" role="status"></div>
       </form>
     </div>
   </section>
 
   <!-- G. ARBITER -->
   <section id="arbiter">
-    <div class="section-head reveal">
-      <span class="section-num">06 / SETTLE</span>
-      <div><h2 class="section-title">The arbiter decides.</h2><p class="section-sub">Each deliverable checked independently. Full capture, partial capture, or void. The page never decides amounts — the backend does.</p></div>
-    </div>
-    <div class="btn-row reveal d1">
-      <button type="button" class="btn" id="btnJudge" disabled><span class="spinner" aria-hidden="true"></span><span id="btnJudgeLabel">Evaluate deliverables with AI</span></button>
-    </div>
-    <p class="judge-status reveal d1" id="judgeStatus">No evaluation yet.</p>
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">06 / Settle</div><div><h2 class="section-title">The arbiter decides.</h2><p class="section-sub">Each deliverable checked independently. Full capture, partial capture, or void. The page never decides amounts.</p></div></div>
+    <div class="btn-row"><button type="button" class="btn" id="btnJudge" disabled><span class="spinner" aria-hidden="true"></span><span id="btnJudgeLabel">Evaluate deliverables with AI</span></button></div>
+    <p class="judge-status" id="judgeStatus">No evaluation yet.</p>
     <div class="form-error" id="judgeError" role="alert"></div>
-    <div id="verdictWrap" hidden class="reveal d2">
+    <div id="verdictWrap" hidden>
       <div class="verdict" id="verdictBar">
         <div class="verdict-top"><span class="verdict-word" id="verdictWord">—</span><span class="verdict-pct" id="verdictPct"></span></div>
         <div class="meter" aria-hidden="true"><i id="verdictMeter" style="width:0%"></i></div>
         <p class="coverage" id="coverage"></p>
-        <div class="moneyline">
-          <div>Agreed<b id="mAgreed">—</b></div>
-          <div>Released to seller<b id="mReleased">—</b></div>
-          <div>Returned to buyer<b id="mReturned">—</b></div>
-        </div>
+        <div class="moneyline"><div>Agreed<b id="mAgreed">—</b></div><div>Released to seller<b id="mReleased">—</b></div><div>Returned to buyer<b id="mReturned">—</b></div></div>
         <p class="txref" id="txRef" hidden>Transaction reference: <b id="txId"></b></p>
         <p class="summary" id="arbSummary"></p>
       </div>
@@ -463,42 +377,24 @@ footer.site code{font-family:var(--mono);color:var(--muted)}
 
   <!-- H. AUDIT -->
   <section id="audit">
-    <div class="section-head reveal">
-      <span class="section-num">07 / AUDIT</span>
-      <div><h2 class="section-title">Full transparency.</h2><p class="section-sub">Read-only trail from the backend. Limits and authorization identifiers are filtered out even if present.</p></div>
-    </div>
-    <div class="audit-tools reveal d1">
-      <button type="button" class="btn btn-ghost btn-sm" id="btnAudit">Load audit trail</button>
-      <button type="button" class="btn btn-ghost btn-sm" id="btnRefreshDeal">Refresh deal</button>
-    </div>
+    <div class="section-head" style="margin-bottom:48px"><div class="section-num">07 / Audit</div><div><h2 class="section-title">Full transparency.</h2><p class="section-sub">Read-only trail from the backend. Limits and authorization identifiers are filtered out even if present.</p></div></div>
+    <div class="audit-tools"><button type="button" class="btn btn-ghost btn-sm" id="btnAudit">Load audit trail</button><button type="button" class="btn btn-ghost btn-sm" id="btnRefreshDeal">Refresh deal</button></div>
     <div class="form-error" id="auditError" role="alert"></div>
     <ol class="timeline" id="auditTimeline"></ol>
-    <details class="raw">
-      <summary>Filtered audit payload (safe fields only)</summary>
-      <div class="audit-pre" id="auditRaw" tabindex="0" role="region" aria-label="Filtered audit payload">No audit loaded.</div>
-    </details>
+    <details class="raw"><summary>Filtered audit payload (safe fields only)</summary><div class="audit-pre" id="auditRaw" tabindex="0" role="region" aria-label="Filtered audit payload">No audit loaded.</div></details>
   </section>
   </div>
 
   <footer class="site"><div class="wrap">
     <p>DEALROOM demo · PayPal Sandbox · Orders v2 AUTHORIZE → Payments v2 capture / void · No real money moves.</p>
-    <p style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted-2)">Run locally: npm install · fill .env · npm start · open localhost:3000 · tests: npm test (6/6)</p>
+    <p style="margin-top:8px;font-family:var(--mono);font-size:10px;opacity:.4">Run locally: npm install · fill .env · npm start · open localhost:3000 · tests: npm test (6/6)</p>
   </div></footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-const api = {
-  async req(path, opts) {
-    let res;
-    try { res = await fetch(path, opts); }
-    catch { throw new Error("Network error. Is the backend running?"); }
-    let data = null;
-    try { data = await res.json(); } catch { data = null; }
-    if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
-    return data || {};
-  },
+const api = { async req(path, opts) { let res; try { res = await fetch(path, opts); } catch { throw new Error("Network error. Is the backend running?"); } let data = null; try { data = await res.json(); } catch { data = null; } if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")")); return data || {}; },
   createDeal(p) { return api.req("/api/deals", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(p) }); },
   getDeal(id) { return api.req("/api/deals/" + encodeURIComponent(id)); },
   deliver(id, s) { return api.req("/api/deals/" + encodeURIComponent(id) + "/deliver", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ submission: s }) }); },
@@ -509,7 +405,7 @@ const api = {
 const S = { dealId: null, deal: null, es: null, streamSeq: 0, seenTurns: new Set(), busy: { create: false, deliver: false, judge: false, refresh: false } };
 const $ = (id) => document.getElementById(id);
 const els = {};
-["healthBadge","healthText","cornerStatus","createForm","fTitle","fBuyerMax","fSellerMin","fCategory","fCurrency","fDeliverables","btnCreate","btnCreateLabel","createError","createOk",
+["healthBadge","healthText","createForm","fTitle","fBuyerMax","fSellerMin","fCategory","fCurrency","fDeliverables","btnCreate","btnCreateLabel","createError","createOk",
  "loadForm","fDealId","btnLoad","loadError","colBuyer","colSeller","buyerCount","sellerCount","sseDot","sseText","sseError","track","trackerNote","stage5label","stage5sub",
  "fundEmpty","fundAwait","fundHeld","fundAmount","heldAmount","heldSub","btnApprove","btnRefreshFund","fundError",
  "expectedList","deliverForm","fSubmission","subCount","btnDeliver","btnDeliverLabel","deliverError","deliverOk",
@@ -525,7 +421,7 @@ function el(t, cls, txt) { const n = document.createElement(t); if (cls) n.class
 function scrub(d) { if (!d || typeof d !== "object") return d; const c = Object.assign({}, d); delete c.buyerMax; delete c.sellerMin; delete c.authorizationId; delete c.maxBudget; return c; }
 const SAFE = new Set(["id","title","category","deliverables","currency","status","turns","price","orderId","approveUrl","submission","decision","payment","paymentError","authorizationExpiresAt","createdAt","updatedAt","mandate"]);
 function safeAudit(src) { if (!src || typeof src !== "object") return {}; const out = {}; for (const k of Object.keys(src)) { if (!SAFE.has(k)) continue; if (k === "mandate" && src.mandate && typeof src.mandate === "object") out.mandate = { categories: src.mandate.categories, expiresAt: src.mandate.expiresAt, hasBudget: true }; else if (k === "payment" && src.payment && typeof src.payment === "object") out.payment = { status: src.payment.status, captureId: src.payment.captureId, id: src.payment.id, amount: src.payment.amount }; else out[k] = src[k]; } return out; }
-async function checkHealth() { const ok = await api.health(); els.healthBadge.classList.toggle("ok", ok); els.healthBadge.classList.toggle("bad", !ok); els.healthText.textContent = ok ? "Backend online" : "Backend unreachable"; els.cornerStatus.textContent = ok ? "ONLINE" : "OFFLINE"; }
+async function checkHealth() { const ok = await api.health(); els.healthBadge.classList.toggle("ok", ok); els.healthText.textContent = ok ? "Backend online" : "Backend unreachable"; }
 function validateCreate() {
   const title = els.fTitle.value.trim(); const delivs = els.fDeliverables.value.split("\n").map((s) => s.trim()).filter(Boolean);
   const buyerMax = Number(els.fBuyerMax.value); const sellerMin = Number(els.fSellerMin.value); const currency = (els.fCurrency.value.trim() || "USD").toUpperCase();
@@ -564,7 +460,6 @@ function renderTracker() {
   els.trackerNote.textContent = st ? (notes[st] || ("Status: " + st)) : "Create a deal to begin tracking.";
   els.heroState.textContent = st ? st.replace(/_/g, " ") : "No deal yet";
   els.heroAmount.textContent = (S.deal && S.deal.price !== null && S.deal.price !== undefined && isFinite(Number(S.deal.price))) ? money(S.deal.price, S.deal.currency) : "$—";
-  els.cornerStatus.textContent = st ? st.replace(/_/g, " ").toUpperCase() : "IDLE";
 }
 function turnKey(t) { return [t.round, t.side, t.price, t.action, t.message, !!t.blocked].join("|"); }
 function clearConvo() { els.colBuyer.innerHTML = ""; els.colSeller.innerHTML = ""; }
@@ -632,7 +527,6 @@ els.btnRefreshFund.addEventListener("click", async () => { if (S.busy.refresh ||
 els.btnCopyId.addEventListener("click", async () => { if (!S.dealId) return; try { await navigator.clipboard.writeText(S.dealId); showToast("Deal ID copied."); } catch { showToast("Copy failed. Deal ID: " + S.dealId, true); } });
 els.fSubmission.addEventListener("input", () => { els.subCount.textContent = String(els.fSubmission.value.length); });
 checkHealth(); setInterval(checkHealth, 30000);
-// scroll reveal
 const io = new IntersectionObserver((entries) => { entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: .12 });
 document.querySelectorAll(".reveal").forEach((n) => io.observe(n));
 (function init() { renderTracker(); convoPlaceholder(); renderFunding(); renderExpected(); renderVerdict(); syncActions(); try { const id = new URLSearchParams(location.search).get("deal"); if (id) { els.fDealId.value = id; selectDeal(id, false).catch(() => {}); } } catch {} })();
